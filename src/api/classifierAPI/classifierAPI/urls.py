@@ -15,7 +15,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from .import views
+
+apiUrls = [path('status', views.status),
+    path('classifyImage', views.classifyImage)]
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title = 'Image classifier API',
+        default_version = 'v1',
+        description = 'PyTorch based image classifier API'
+    ),
+    public = True
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/status', views.status),
+    path('api/classifyImage', views.classifyImage),
+    path('', schema_view.with_ui('swagger', cache_timeout = 0))
 ]
