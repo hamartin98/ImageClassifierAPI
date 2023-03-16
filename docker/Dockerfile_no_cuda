@@ -12,7 +12,7 @@ WORKDIR $WORK_DIR
 COPY . $WORK_DIR
 COPY requirements.txt /
 
-RUN pip3 install torch torchvision
+RUN pip3 install --cache-dir $CACHE_DIR torch torchvision --index-url https://download.pytorch.org/whl/cpu
 RUN pip3 install --cache-dir $CACHE_DIR -r /requirements.txt
 
 EXPOSE 8000
