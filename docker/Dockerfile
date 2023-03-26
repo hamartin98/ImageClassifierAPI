@@ -1,4 +1,6 @@
+# syntax = docker/dockerfile:experimental
 FROM python:3.10-slim-bullseye
+RUN --mount=type=cache,mode=0777,target=/root/.cache/pip pip install pyyaml
 
 ENV WORK_DIR=/src
 ENV CACHE_DIR=.pip_cache
@@ -10,9 +12,12 @@ RUN mkdir -p $CACHE_DIR $WORK_DIR
 WORKDIR $WORK_DIR
 
 COPY . $WORK_DIR
-COPY requirements.txt /
+COPY requirements.txt /requirements.txt
 
-RUN pip3 install torch torchvision
+# Install dependencies for opencv
+RUN apt-get update && \
+    apt-get install ffmpeg libsm6 libxext6  -y
+
 RUN pip3 install --cache-dir $CACHE_DIR -r /requirements.txt
 
 EXPOSE 8000

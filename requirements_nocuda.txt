@@ -4,5 +4,3 @@ django-rest-framework==0.1.0
 matplotlib
 opencv-python
 scikit-learn
-torch
-torchvision
