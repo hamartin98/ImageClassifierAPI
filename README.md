@@ -12,6 +12,10 @@
 docker build -f docker/Dockerfile . -t image-classifier:latest
 ```
 
+```
+docker build -f docker/Dockerfile . -t image-classifier:latest --no-cache
+```
+
 - Without CUDA capabilities:
 ```
 docker build -f docker/Dockerfile_no_cuda . -t image-classifier-nocuda:latest
@@ -22,13 +26,20 @@ docker build -f docker/Dockerfile_no_cuda . -t image-classifier-nocuda:latest
 ```
 docker run --name image-classifier \
            -p 8000:8000 \
+           -v $pwd/data:/data \
            -t image-classifier:latest
 ```
+
+```
+docker run --name image-classifier -p 8000:8000 -v $pwd/data:/data -t image-classifier:latest
+```
+
 
 - Or without CUDA capabilities:
 ```
 docker run --name image-classifier-nocuda \
            -p 8000:8000 \
+           -v $pwd/data:/data \
            -t image-classifier-nocuda:latest
 ```
 
