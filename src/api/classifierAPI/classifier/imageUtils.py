@@ -36,7 +36,6 @@ def splitImage(image, rows, cols) -> None:
 
 
 def imageToTensor(image) -> None:
-    print(image)
     transformedImage = image
 
     imageTensor = torch.from_numpy(transformedImage)
