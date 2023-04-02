@@ -12,7 +12,7 @@ RUN mkdir -p $CACHE_DIR $WORK_DIR
 WORKDIR $WORK_DIR
 
 COPY . $WORK_DIR
-COPY requirements.txt /requirements.txt
+COPY requirements/requirements.txt /requirements.txt
 
 # Install dependencies for opencv
 RUN apt-get update && \
