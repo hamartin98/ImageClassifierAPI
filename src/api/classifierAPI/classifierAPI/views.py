@@ -43,7 +43,11 @@ def classifyImage(request):
 
         return Response(response)
     except KeyError:
-        return Response({'error': 'Request has no resource file atteched2'})
+        response = Response({'error': 'Request has no resource file atteched'})
+        response.status_code = 400
+        return response
     except Exception as e:
         print(e)
-        return Response({'error': f'Error happened: {e}'})
+        response = Response({'error': f'Error happened: {e}'})
+        response.status_code = 400
+        return response
