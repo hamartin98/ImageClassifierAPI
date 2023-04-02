@@ -23,12 +23,6 @@ docker build -f docker/Dockerfile.no_cuda . -t image-classifier-nocuda:latest
 
 ## Run docker image
 - From main dir run:
-```
-docker run --name image-classifier \
-           -p 8000:8000 \
-           -v $pwd/data:/data \
-           -t image-classifier:latest
-```
 
 ```
 docker run --name image-classifier -p 8000:8000 -v $pwd/data:/data -t image-classifier:latest
@@ -37,10 +31,7 @@ docker run --name image-classifier -p 8000:8000 -v $pwd/data:/data -t image-clas
 
 - Or without CUDA capabilities:
 ```
-docker run --name image-classifier-nocuda \
-           -p 8000:8000 \
-           -v $pwd/data:/data \
-           -t image-classifier-nocuda:latest
+docker run --name image-classifier-nocuda -p 8000:8000 -v $pwd/data:/data -t image-classifier-nocuda:latest
 ```
 
 ## Test connection from outside
@@ -48,3 +39,14 @@ docker run --name image-classifier-nocuda \
 ```
 curl 127.0.0.1:8000/api/status
 ```
+
+## Use endpoints
+- In the file ImageClassifier.postman_collection you can find the endpoints with sample request
+- To use this, install Postman and import this collection
+- For the classification endpoint a sample response can be found in the classification_sample_response.json file
+
+### Classification endpoint
+- The endpoint expects an image
+You can add the optional 'rows' and 'cols' parameters, to specificy the image splitting dimensions, when tese are used, the image is splitted according to these parameters before classification
+If these parameters are not provided, the whole image is used
+- The endpoint returns a json object consisting of an array with the dimension of the given number of rows and columns, with each item consisting of the 3 class labels
