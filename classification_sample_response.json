@@ -1,0 +1,127 @@
+{
+  "message": "Classification succesful",
+  "rows": 10,
+  "cols": 10,
+  "result": [
+    [
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 }
+    ],
+    [
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 }
+    ],
+    [
+      { "buildings": 2, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 }
+    ],
+    [
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 2, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 }
+    ],
+    [
+      { "buildings": 2, "vegetation": 0, "road": 0 },
+      { "buildings": 2, "vegetation": 0, "road": 0 },
+      { "buildings": 2, "vegetation": 0, "road": 0 },
+      { "buildings": 2, "vegetation": 0, "road": 0 },
+      { "buildings": 2, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 2, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 }
+    ],
+    [
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 2, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 }
+    ],
+    [
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 }
+    ],
+    [
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 }
+    ],
+    [
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 }
+    ],
+    [
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 1, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 },
+      { "buildings": 0, "vegetation": 0, "road": 0 }
+    ]
+  ]
+}
