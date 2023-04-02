@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "570e6b32-e951-44be-a9f3-66d12d091579",
+		"name": "Diploma",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20450331"
+	},
+	"item": [
+		{
+			"name": "classifyImage",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/D:/Egyetem/_MSc/4. félév/Diplomadolgozat/Program/01.bmp.jpeg"
+						},
+						{
+							"key": "rows",
+							"value": "10",
+							"type": "text"
+						},
+						{
+							"key": "cols",
+							"value": "10",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/classifyImage",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"classifyImage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/api/status",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"status"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
