@@ -6,57 +6,49 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-# TODO: FIX paths
-
 
 class CustomDataset(Dataset):
-    def __init__(self, path, classes, img_dim=(32, 32), transform=None):
+    def __init__(self, path, classes, imgDim=(32, 32), transform=None):
         self.transform = transform
-        self.imgs_path = path
-        file_list = glob.glob(os.path.join(self.imgs_path, "*"))
+        self.imagesPath = path
+        fileList = glob.glob(os.path.join(self.imagesPath, "*"))
 
         self.data = []
 
-        for class_path in file_list:
-            class_path = os.path.join(class_path)
-            class_path = os.path.join(class_path.replace('\\', '/'))
-            class_name = class_path.split('/')[-1]
-            #class_name = class_path.split("\\")[-1]
-            #class_name = class_path.split("\\")[-1]
-            x = os.path.join(class_path, "/*.jpg")
-            p = glob.glob(os.path.join(class_path) + "/*.jpg")
-            for img_path in p:
-                # for img_path in glob.glob(class_path + "\\*.jpg"):
-                img_path = img_path.replace('\\', '/')
-                self.data.append([os.path.join(img_path), class_name])
+        for classPath in fileList:
+            classPath = os.path.relpath(classPath)
+            className = os.path.normpath(classPath).split(os.path.sep)[-1]
+            p = glob.glob(classPath + "/*.jpg")
+            for imagePath in p:
+                self.data.append([os.path.join(imagePath), className])
 
-        self.create_class_map(classes)
-        self.img_dim = img_dim
+        self.createClassMap(classes)
+        self.imgDim = imgDim
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
-        img_path, class_name = self.data[idx]
+        img_path, className = self.data[idx]
         img = cv2.imread(img_path)
-        img = cv2.resize(img, self.img_dim)
+        img = cv2.resize(img, self.imgDim)
 
-        img_tensor = torch.from_numpy(img)
-        img_tensor = img_tensor.permute(2, 0, 1)
-        img_tensor = img_tensor.numpy()
-        img_tensor = np.transpose(img_tensor, (1, 2, 0))
+        imgTensor = torch.from_numpy(img)
+        imgTensor = imgTensor.permute(2, 0, 1)
+        imgTensor = imgTensor.numpy()
+        imgTensor = np.transpose(imgTensor, (1, 2, 0))
 
-        class_id = self.class_map[class_name]
-        class_id = torch.tensor(class_id)
+        classId = self.classMap[className]
+        classId = torch.tensor(classId)
 
         if self.transform:
-            img_tensor = self.transform(img_tensor)
+            imgTensor = self.transform(imgTensor)
 
-        return img_tensor, class_id
+        return imgTensor, classId
 
-    def create_class_map(self, classes):
-        class_map = {}
+    def createClassMap(self, classes):
+        classMap = {}
         for idx, cls in enumerate(classes):
-            class_map[cls] = idx
+            classMap[cls] = idx
 
-        self.class_map = class_map
+        self.classMap = classMap
