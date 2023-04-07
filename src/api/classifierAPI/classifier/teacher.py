@@ -40,9 +40,7 @@ class Teacher:
             self.dataSets[x], self.config.getBatchSize(), shuffle=True, num_workers=self.config.getDataLoaderWorkers()) for x in ['train', 'test']}
 
         if self.config.getLoadModel():
-            self.network.load_state_dict(
-                torch.load(self.config.getModelPath()))
-            print('Model loaded')
+            self.network.load(self.config.getModelPath())
 
         # send network to device
         self.network.to(self.device)
@@ -85,8 +83,7 @@ class Teacher:
         print('Finished Training')
 
         if self.config.getSaveModel():
-            torch.save(self.network.state_dict(), self.config.getModelPath())
-            print('Model saved')
+            self.network.save(self.config.getModelPath())
 
     def test(self) -> None:
         print('Testing')

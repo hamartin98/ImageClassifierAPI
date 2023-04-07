@@ -16,6 +16,15 @@ class BaseNetwork(nn.Module):
             result = layer(result)
 
         return result
-    
+
     def getId(self) -> str:
         return self.id
+
+    def load(self, path: str) -> None:
+        self.load_state_dict(torch.load(path))
+        print('Model loaded')
+
+    def save(self, path: str) -> None:
+        self._save_to_state_dict()
+        torch.save(self.state_dict(), path)
+        print('Model saved')
