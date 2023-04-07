@@ -5,7 +5,9 @@ import cv2
 import numpy as np
 import os
 
-from .models.model4 import Network4
+from config import Config
+from classifierConfig import ClassifierConfig
+from .models.threeClass import ThreeClassNetwork
 
 from .imageUtils import splitImage, imageToTensor
 
@@ -13,16 +15,17 @@ from .imageUtils import splitImage, imageToTensor
 class ImageClassifier():
     def __init__(self) -> None:
         #MODEL_PATH = os.path.abspath('/data/models/model_latest.pth') # For docker
-        MODEL_PATH = os.path.relpath('data/models/model_latest.pth')
+        #MODEL_PATH = os.path.relpath('data/models/model_latest.pth')
 
-        if not os.path.exists(MODEL_PATH):
+        config = ClassifierConfig(Config.getPath())
+        if not os.path.exists(config.getModelPath()):
             print('Path not found')
 
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print(f'Using device: {device}')
 
-        self.network = Network4()
-        self.network.load_state_dict(torch.load(MODEL_PATH, map_location = device))
+        self.network = ThreeClassNetwork()
+        self.network.load_state_dict(torch.load(config.getModelPath(), map_location = device))
 
     def classifyImage(self, image) -> None:
         print(image)

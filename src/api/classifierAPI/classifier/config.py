@@ -1,6 +1,6 @@
 import json
 import os
-
+from typing import Any
 
 class Config:
     _inited = False
@@ -18,6 +18,10 @@ class Config:
             Config.overrideFromEnv()
             Config.print()
             Config._inited = True
+            
+    @staticmethod
+    def isSet(value: Any) -> bool:
+        return value is not None and value != ''
 
     @staticmethod
     def setFromFile(fileName) -> None:
@@ -42,7 +46,7 @@ class Config:
 
     @staticmethod
     def setBasePath(newValue) -> None:
-        if newValue:
+        if Config.isSet(newValue):
             Config._config['basePath'] = newValue
 
     @staticmethod
@@ -51,16 +55,22 @@ class Config:
 
     @staticmethod
     def setIsRelativePath(newValue) -> None:
-        if newValue:
+        if Config.isSet(newValue):
             Config._config['isRelativePath'] = newValue
 
     @staticmethod
     def getImagesPath() -> None:
-        return os.path.join(Config._config['basePath'], 'images')
+        path = os.path.join(Config._config['basePath'], 'images')
+        if Config.getIsRelativePath():
+            return os.path.realpath(path)
+        return os.path.abspath(path)
 
     @staticmethod
     def getModelsPath() -> None:
-        return os.path.join(Config._config['basePath'], 'models')
+        path = os.path.join(Config._config['basePath'], 'models')
+        if Config.getIsRelativePath():
+            return os.path.realpath(path)
+        return os.path.abspath(path)
     
     @staticmethod
     def getPath() -> None:

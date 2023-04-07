@@ -1,10 +1,10 @@
 import torch
-import torch.nn as nn
+from .baseNetwork import BaseNetwork
 
 
-class Network4(nn.Module):
+class ThreeClassNetwork(BaseNetwork):
     def __init__(self):
-        super().__init__()
+        super().__init__('three_class')
         layers = [
             torch.nn.Conv2d(3, 8, kernel_size=3, stride=1,
                             padding=1, padding_mode="reflect"),
@@ -42,11 +42,3 @@ class Network4(nn.Module):
         ]
 
         self.layers = torch.nn.ModuleList(layers)
-
-    def forward(self, x):
-        result = x
-
-        for layer in self.layers:
-            result = layer(result)
-
-        return result
