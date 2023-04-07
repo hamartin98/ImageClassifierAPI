@@ -2,7 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from config import Config
+from classifier.config import Config
 
 
 def main():

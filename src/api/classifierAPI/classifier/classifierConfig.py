@@ -1,4 +1,4 @@
-from ..config import Config
+from config import Config
 import os
 import json
 
@@ -103,14 +103,14 @@ class ClassifierConfig:
             self._config['imageWidth'] = newValue
 
     def getImageWidth(self) -> None:
-        return self.config['imageWidth']
+        return self._config['imageWidth']
 
     def setImageHeight(self, newValue) -> None:
         if newValue:
             self._config['imageHeight'] = newValue
 
     def getImageHeight(self) -> None:
-        return self.config['imageHeight']
+        return self._config['imageHeight']
 
     def getImageSize(self) -> None:
         return (self.getImageWidth(), self.getImageHeight())

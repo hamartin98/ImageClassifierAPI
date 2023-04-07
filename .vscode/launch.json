@@ -8,7 +8,7 @@
       "name": "Python: Main Learn",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}\\src\\api\\classifierAPI\\classifier\\main.py",
+      "program": "${workspaceFolder}\\src\\api\\classifierAPI\\classifier\\learnBase.py",
       "console": "integratedTerminal",
       "justMyCode": true
     },

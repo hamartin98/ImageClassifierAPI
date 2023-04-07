@@ -1,34 +1,19 @@
-import os
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
+from config import Config
 from datasets.customDataset import CustomDataset
 from models.model4 import Network4
 from datasetUtils import splitDataset
-
-# TODO: Fix docker paths
-# path to save to and load model from
-
-MODEL_PATH = os.path.abspath('/data/models/model_latest.pth') # path to model for docker
-#MODEL_PATH = os.path.relpath('data/models/model_latest.pth') # path to model
-
-DATA_PATH = os.path.abspath('/data/images/first')  # path to data for docker
-#DATA_PATH = os.path.relpath('data/images/first')  # path to data
+from classifierConfig import ClassifierConfig
 
 BATCH_SIZE = 10  # size of batches in the dataset
-#IMAGE_SIZE = (32, 32)  # size of images
-IMAGE_SIZE = (62, 62)  # size of images
 CLASSES = ('0', '1', '2')  # class labels
-TEST_SIZE = 0.5  # size of test data set in percentages
-SAVE_MODEL = False  # save model
-LOAD_MODEL = True  # load model
-EPOCHS = 10  # Number of epochs
-DATALOADER_WORKERS = 2  # number of worker processes in the data loader
-LEARNING_RATE = 0.001
+config = ClassifierConfig(Config.getPath())
+config.print()
 
 print('Starting...')
 if __name__ == '__main__':
@@ -39,20 +24,20 @@ if __name__ == '__main__':
     
     net = Network4()
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=LEARNING_RATE, momentum=0.9)
+    optimizer = optim.SGD(net.parameters(), lr=config.getLearningRate(), momentum=config.getMomentum())
 
     transform = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-    dataSet = CustomDataset(path=DATA_PATH, classes=CLASSES,
-                            img_dim=IMAGE_SIZE, transform=transform)
+    dataSet = CustomDataset(path=config.getDataPath(), classes=CLASSES,
+                            img_dim=config.getImageSize(), transform=transform)
 
-    dataSets = splitDataset(dataSet, test_size=TEST_SIZE)
+    dataSets = splitDataset(dataSet, test_size=config.getTestRatio())
     dataLoaders = {x: DataLoader(
-        dataSets[x], BATCH_SIZE, shuffle=True, num_workers=DATALOADER_WORKERS) for x in ['train', 'test']}
+        dataSets[x], BATCH_SIZE, shuffle=True, num_workers=config.getDataLoaderWorkers()) for x in ['train', 'test']}
 
-    if LOAD_MODEL:
-        net.load_state_dict(torch.load(MODEL_PATH))
+    if config.getLoadModel():
+        net.load_state_dict(torch.load(config.getModelPath()))
         print('Model loaded')
         
     # send network to device
@@ -60,7 +45,7 @@ if __name__ == '__main__':
     # set training mode
     net.train()
 
-    for epoch in range(EPOCHS):  # loop over the dataset multiple times
+    for epoch in range(config.getEpochs()):  # loop over the dataset multiple times
 
         running_loss = 0.0
         for i, data in enumerate(dataLoaders['train'], 0):
@@ -87,8 +72,8 @@ if __name__ == '__main__':
 
     print('Finished Training')
 
-    if SAVE_MODEL:
-        torch.save(net.state_dict(), MODEL_PATH)
+    if config.getSaveModel():
+        torch.save(net.state_dict(), config.getModelPath())
         print('Model saved')
 
     print('Testing')

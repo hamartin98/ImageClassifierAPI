@@ -4,6 +4,7 @@ import os
 
 class Config:
     _inited = False
+    _path = None
     _config = {
             'basePath': 'data',
             'isRelativePath': True
@@ -11,8 +12,8 @@ class Config:
 
     def __init__(self, fileName) -> None:
         
+        Config._path = fileName
         if not Config._inited:
-
             Config.setFromFile(fileName)
             Config.overrideFromEnv()
             Config.print()
@@ -60,6 +61,10 @@ class Config:
     @staticmethod
     def getModelsPath() -> None:
         return os.path.join(Config._config['basePath'], 'models')
+    
+    @staticmethod
+    def getPath() -> None:
+        return Config._path
 
     @staticmethod
     def print() -> None:

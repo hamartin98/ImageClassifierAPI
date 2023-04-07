@@ -1,4 +1,15 @@
 {
   "basePath": "data",
-  "isRelativePath": true
+  "isRelativePath": true,
+  "modelPath": "model_latest.pth",
+  "dataPath": "first",
+  "imageWidth": 62,
+  "imageHeight": 62,
+  "testRatio": 0.5,
+  "saveModel": false,
+  "loadModel": true,
+  "dataLoaderWorkers": 2,
+  "learningRate": 0.001,
+  "epochs": 50,
+  "momentum": 0.9
 }
