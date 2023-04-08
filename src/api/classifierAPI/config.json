@@ -10,25 +10,28 @@
   "loadModel": true,
   "dataLoaderWorkers": 2,
   "learningRate": 0.001,
-  "epochs": 15,
+  "epochs": 50,
   "momentum": 0.9,
-  "batchSize": 10,
+  "batchSize": 15,
   "type": "None",
   "building": {
     "type": "building",
     "loadModel": false,
-    "dataPath": "base_data/1000_b - SG"
+    "dataPath": "base_data/1000_b - SG",
+    "modelPath": "three_class_building_2.pth"
   },
   "vegetation": {
     "type": "vegetation",
     "loadModel": false,
     "saveModel": true,
-    "dataPath": "base_data/1000_v - SG"
+    "dataPath": "base_data/1000_v - SG",
+    "modelPath": "three_class_vegetation_2.pth"
   },
   "road": {
     "type": "road",
     "loadModel": false,
     "saveModel": true,
-    "dataPath": "base_data/1000_r - SG"
+    "dataPath": "base_data/1000_r - SG",
+    "modelPath": "three_class_road_2.pth"
   }
 }

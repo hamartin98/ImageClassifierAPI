@@ -27,8 +27,6 @@ class MultiModelTeacher:
 
         for key, classification in classifications.items():
             print(key)
-            if key != 'building':
-                classification.configureAndSetupNetwork(self.baseConfig)
-                classification.getConfigutation().print()
-                teacher = Teacher(classification)
-                teacher.trainAndTest()
+            classification.configureAndSetupNetwork(self.baseConfig)
+            teacher = Teacher(classification)
+            teacher.trainAndTest()

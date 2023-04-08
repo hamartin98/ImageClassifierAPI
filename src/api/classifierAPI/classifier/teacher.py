@@ -59,6 +59,7 @@ class Teacher:
 
         startTime = timer()
         correct = 0
+        size = len(self.dataLoaders['train'].dataset)
         # loop over the dataset multiple times
         for epoch in range(self.config.getEpochs()):
 
@@ -79,11 +80,14 @@ class Teacher:
                 loss.backward()
                 self.optimizer.step()
 
+                correct += (outputs.argmax(1) == labels).type(torch.float).sum().item()
+                
                 # print statistics
                 runningLoss += loss.item()
-                if i % 200 == 199:    # print every 2000 mini-batches
+                if i % 200 == 199:    # print every 200 mini-batches
+                    accuracy = 100 * correct / size
                     print(
-                        f'[{epoch + 1}, {i + 1:5d}] loss: {runningLoss / 200:.3f}')
+                        f'[{epoch + 1}, {i + 1:5d}] loss: {runningLoss / 200:.3f} accuracy: {accuracy / 200:.3f} %')
                     runningLoss = 0.0
 
         endTime = timer()
