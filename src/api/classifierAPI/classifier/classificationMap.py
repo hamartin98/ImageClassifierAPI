@@ -1,9 +1,12 @@
 from typing import List, Dict
+import os
 from classifierConfig import ClassifierConfig
+from config import Config
 from labelItem import LabelItem
 from classificationType import ClassificationType
 from models.baseNetwork import BaseNetwork
 from models.FirstNetwork import FirstNetwork
+
 
 class BaseClassification:
 
@@ -14,6 +17,7 @@ class BaseClassification:
         self.classes = {}
         self.configuration: ClassifierConfig = None
         self.network: BaseNetwork = None
+        self.device: str = None
 
     def getLabelByValue(self, value) -> LabelItem:
         if value in self.classes:
@@ -44,18 +48,24 @@ class BaseClassification:
         self.configuration = config
         if self.configuration.getType() != self.type:
             self.configuration.innerOverrideToType(self.type)
-            
+
     def setupNetwork(self, device: str) -> None:
+        self.device = device
         self.network = FirstNetwork(self.getClassNum())
-        self.network.loadToDevice(self.configuration.getModelPath(), device)
-        
-    def configureAndSetupNetwork(self, config: ClassifierConfig, device: str) -> None:
+        if self.configuration.getLoadModel():
+            self.network.loadToDevice(
+                self.configuration.getModelPath(), self.device)
+
+    def configureAndSetupNetwork(self, config: ClassifierConfig) -> None:
         self.configure(config)
-        self.setupNetwork(device)
-            
+        self.setupNetwork(self.device)
+
     def isConfigured(self) -> bool:
         return self.configuration is not None and self.configuration.getType() == self.type
     
+    def getConfigutation(self) -> ClassifierConfig:
+        return self.configuration
+
     def getNetwork(self) -> BaseNetwork:
         return self.network
 
@@ -64,6 +74,24 @@ class BaseClassification:
 
     def classifyImagesWithModel(images, config: ClassifierConfig) -> None:
         pass
+
+
+    # TODO: Fix path issues
+    def saveModel(self) -> None:
+        if self.configuration.getSaveModel():
+            if self.network:
+                basePath = Config.getModelsPath()
+                modelName = self.network.getId() + '_' + self.name + '.pth'
+                basePath = 'data\models'
+                #savePath = os.path.normpath(os.path.abspath(os.path.join(basePath, modelName)))
+                savePath = os.path.join(basePath, modelName)
+                savePath = os.path.normpath(savePath)
+                self.network.save(savePath)
+            else:
+                print('Error saving model, network not found')
+                
+    def loadModel(self) -> None:
+        print('TODO: implement model load')
 
 
 class BuildingClassification(BaseClassification):
@@ -114,10 +142,10 @@ class ClassificationMap:
             ClassificationType.VEGETATION: VegetationClassification(),
             ClassificationType.ROAD: PavedRoadClassification()
         }
-        
+
     def getClassifications(self) -> None:
         return self._classifcations
-    
+
     def getClassificationsByType(self) -> None:
         return self._classifcationsByType
 
@@ -129,6 +157,6 @@ class ClassificationMap:
 
     def getClassificationByType(self, type: ClassificationType) -> BaseClassification:
         if type in self._classifcationsByType:
-            return self._classifcations[type]
+            return self._classifcationsByType[type]
 
         return None

@@ -12,18 +12,23 @@ from classificationMap import (
     BaseClassification)
 
 from models.baseNetwork import BaseNetwork
+from timeit import default_timer as timer
+import datetime
 
 
 class Teacher:
-    def __init__(self, classification: BaseClassification, config: ClassifierConfig) -> None:
+    def __init__(self, classification: BaseClassification, config: ClassifierConfig = None) -> None:
         self.classification = classification
-        self.config = config
+        self.config = classification.getConfigutation()
+        if config:
+            self.config = config
         self.config.innerOverrideToType(self.classification.type)
 
         self.setupDevice()
 
-        self.network: BaseNetwork = FirstNetwork(classification.getClassNum())
-        self.classes: tuple = classification.getClassLabelsTuple()
+        #self.network: BaseNetwork = FirstNetwork(self.classification.getClassNum())
+        self.network: BaseNetwork = self.classification.getNetwork()
+        self.classes: tuple = self.classification.getClassLabelsTuple()
         self.criterion = nn.CrossEntropyLoss()
         self.optimizer = optim.SGD(
             self.network.parameters(), lr=self.config.getLearningRate(), momentum=self.config.getMomentum())
@@ -35,12 +40,11 @@ class Teacher:
                                      imgDim=self.config.getImageSize(), transform=self.transform)
 
         self.dataSets = splitDataset(
-            self.dataSet, testSize=config.getTestRatio())
+            self.dataSet, testSize=self.config.getTestRatio())
         self.dataLoaders = {x: DataLoader(
             self.dataSets[x], self.config.getBatchSize(), shuffle=True, num_workers=self.config.getDataLoaderWorkers()) for x in ['train', 'test']}
 
-        if self.config.getLoadModel():
-            self.network.load(self.config.getModelPath())
+        self.classification.loadModel()
 
         # send network to device
         self.network.to(self.device)
@@ -53,6 +57,8 @@ class Teacher:
         # set training mode
         self.network.train()
 
+        startTime = timer()
+        correct = 0
         # loop over the dataset multiple times
         for epoch in range(self.config.getEpochs()):
 
@@ -80,18 +86,21 @@ class Teacher:
                         f'[{epoch + 1}, {i + 1:5d}] loss: {runningLoss / 200:.3f}')
                     runningLoss = 0.0
 
+        endTime = timer()
+        trainingTime = endTime - startTime
+        trainingStr = str(datetime.timedelta(seconds = round(trainingTime)))
         print('Finished Training')
+        print(f'Training duration: {trainingStr}')
 
-        if self.config.getSaveModel():
-            self.network.save(self.config.getModelPath())
+        self.classification.saveModel()
 
     def test(self) -> None:
         print('Testing')
         correctPred = {classname: 0 for classname in self.classes}
         totalPred = {classname: 0 for classname in self.classes}
 
-        # self.network.eval()
         # again no gradients needed
+        self.network.eval()
         with torch.no_grad():
             for data in self.dataLoaders['test']:
                 images, labels = data

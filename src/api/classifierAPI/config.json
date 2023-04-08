@@ -2,26 +2,33 @@
   "basePath": "data",
   "isRelativePath": true,
   "modelPath": "model_latest.pth",
-  "dataPath": "base_data/1000_r - SG",
+  "dataPath": "",
   "imageWidth": 62,
   "imageHeight": 62,
-  "testRatio": 0.5,
+  "testRatio": 0.25,
   "saveModel": false,
   "loadModel": true,
   "dataLoaderWorkers": 2,
   "learningRate": 0.001,
-  "epochs": 50,
+  "epochs": 15,
   "momentum": 0.9,
   "batchSize": 10,
   "type": "None",
   "building": {
+    "type": "building",
     "loadModel": false,
     "dataPath": "base_data/1000_b - SG"
   },
   "vegetation": {
+    "type": "vegetation",
+    "loadModel": false,
+    "saveModel": true,
     "dataPath": "base_data/1000_v - SG"
   },
   "road": {
+    "type": "road",
+    "loadModel": false,
+    "saveModel": true,
     "dataPath": "base_data/1000_r - SG"
   }
 }

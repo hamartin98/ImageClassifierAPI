@@ -36,7 +36,6 @@ class BaseNetwork(nn.Module):
 
     def save(self, path: str) -> None:
         try:
-            self._save_to_state_dict()
             torch.save(self.state_dict(), path)
             print('Model saved')
         except RuntimeError as error:

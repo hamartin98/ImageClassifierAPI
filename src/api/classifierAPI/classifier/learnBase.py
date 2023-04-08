@@ -4,19 +4,34 @@ from classifierConfig import ClassifierConfig
 
 from teacher import Teacher
 from classificationMap import BuildingClassification
-from multiModelClassifier import MultiModelClassifier
-from classificationType import ClassificationType
+from multiModelTeacher import MultiModelTeacher
+
+multiMode = True
+
+
+def teachMultipleModels(config: ClassifierConfig) -> None:
+    teacher = MultiModelTeacher(config)
+    teacher.teachWithClassifiers()
+
 
 if __name__ == '__main__':
-    currDir = os.path.abspath(os.getcwd()) # Working directory
-    path = os.path.normpath(os.path.join(currDir, 'src/api/classifierAPI/' 'config.json'))
+    currDir = os.path.abspath(os.getcwd())  # Working directory
+    path = os.path.normpath(os.path.join(
+        currDir, 'src/api/classifierAPI/' 'config.json'))
     Config(path)
     
-    classifier = MultiModelClassifier()
-    
-    classification = BuildingClassification()
     config = ClassifierConfig(Config.getPath())
     
-    teacher = Teacher(classification, config)
-    config.print()
-    teacher.train()
+    if not multiMode:
+        '''currDir = os.path.abspath(os.getcwd())  # Working directory
+        path = os.path.normpath(os.path.join(
+            currDir, 'src/api/classifierAPI/' 'config.json'))
+        Config(path)'''
+
+        classification = BuildingClassification()
+
+        teacher = Teacher(classification, config)
+        config.print()
+        teacher.train()
+    else:
+        teachMultipleModels(config)

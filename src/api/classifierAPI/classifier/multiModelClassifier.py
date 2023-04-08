@@ -32,8 +32,7 @@ class MultiModelClassifier:
                               BaseClassification] = self.classifications.getClassifications()
 
         for key, classification in classifications.items():
-            classification.configureAndSetupNetwork(
-                self.baseConfig, self.device)
+            classification.configureAndSetupNetwork(self.baseConfig)
 
     def dataSetup(self, image, rows: int, cols: int) -> None:
         self.rows = rows
