@@ -21,13 +21,23 @@ class BaseNetwork(nn.Module):
         return self.id
 
     def load(self, path: str) -> None:
-        self.load_state_dict(torch.load(path))
-        print('Model loaded')
+        try:
+            self.load_state_dict(torch.load(path))
+            print('Model loaded')
+        except RuntimeError as error:
+            print(f'Error loading model {error}')
 
     def loadToDevice(self, path: str, device) -> None:
-        self.load_state_dict(torch.load(path, map_location=device))
+        try:
+            self.load_state_dict(torch.load(path, map_location=device))
+            print('Model loaded')
+        except RuntimeError as error:
+            print(f'Error loading model: {error}')
 
     def save(self, path: str) -> None:
-        self._save_to_state_dict()
-        torch.save(self.state_dict(), path)
-        print('Model saved')
+        try:
+            self._save_to_state_dict()
+            torch.save(self.state_dict(), path)
+            print('Model saved')
+        except RuntimeError as error:
+            print(f'Error saving model: {error}')
