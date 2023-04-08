@@ -212,3 +212,6 @@ class ClassifierConfig:
     def overrideToType(self, data, type: ClassificationType) -> None:
         self.setType(type)
         self.setFromJson(data)
+
+    def getType(self) -> ClassificationType:
+        return self._config['type']

@@ -7,7 +7,7 @@ import os
 
 from config import Config
 from classifierConfig import ClassifierConfig
-from .models.threeClass import ThreeClassNetwork
+from .models.FirstNetwork import FirstNetwork
 
 from .imageUtils import splitImage, imageToTensor
 
@@ -24,7 +24,7 @@ class ImageClassifier():
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print(f'Using device: {device}')
 
-        self.network = ThreeClassNetwork()
+        self.network = FirstNetwork()
         self.network.load_state_dict(torch.load(config.getModelPath(), map_location = device))
 
     def classifyImage(self, image) -> None:
@@ -103,7 +103,7 @@ class ImageClassifier():
                     print(f'Class: {res}')
 
                     resultRow.append(
-                        {'buildings': int(res), 'vegetation': 0, 'road': 0})
+                        {'building': int(res), 'vegetation': 0, 'road': 0})
                     # resultRow.append(int(res))
 
             result.append(resultRow)

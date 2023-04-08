@@ -5,7 +5,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
 from datasets.customDataset import CustomDataset
-from models.threeClass import ThreeClassNetwork
+from models.FirstNetwork import FirstNetwork
 from datasetUtils import splitDataset
 from classifierConfig import ClassifierConfig
 from classificationMap import (
@@ -22,7 +22,7 @@ class Teacher:
 
         self.setupDevice()
 
-        self.network: BaseNetwork = ThreeClassNetwork()
+        self.network: BaseNetwork = FirstNetwork(classification.getClassNum())
         self.classes: tuple = classification.getClassLabelsTuple()
         self.criterion = nn.CrossEntropyLoss()
         self.optimizer = optim.SGD(

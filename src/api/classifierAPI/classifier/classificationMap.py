@@ -1,8 +1,9 @@
-from typing import List
+from typing import List, Dict
 from classifierConfig import ClassifierConfig
 from labelItem import LabelItem
 from classificationType import ClassificationType
-
+from models.baseNetwork import BaseNetwork
+from models.FirstNetwork import FirstNetwork
 
 class BaseClassification:
 
@@ -11,6 +12,8 @@ class BaseClassification:
         self.type = type
         self.description = description
         self.classes = {}
+        self.configuration: ClassifierConfig = None
+        self.network: BaseNetwork = None
 
     def getLabelByValue(self, value) -> LabelItem:
         if value in self.classes:
@@ -30,12 +33,31 @@ class BaseClassification:
     def getClassLabels(self) -> List[int]:
         labelList = list(str(key) for key in self.classes.keys())
         return labelList
-    
+
     def getClassLabelsTuple(self) -> tuple:
-        return tuple(self.getClassLabels())           
+        return tuple(self.getClassLabels())
+
+    def getClassNum(self) -> int:
+        return len(self.classes)
+
+    def configure(self, config: ClassifierConfig) -> None:
+        self.configuration = config
+        if self.configuration.getType() != self.type:
+            self.configuration.innerOverrideToType(self.type)
+            
+    def setupNetwork(self, device: str) -> None:
+        self.network = FirstNetwork(self.getClassNum())
+        self.network.loadToDevice(self.configuration.getModelPath(), device)
+        
+    def configureAndSetupNetwork(self, config: ClassifierConfig, device: str) -> None:
+        self.configure(config)
+        self.setupNetwork(device)
+            
+    def isConfigured(self) -> bool:
+        return self.configuration is not None and self.configuration.getType() == self.type
     
-    def configure(self, config) -> None:
-        pass
+    def getNetwork(self) -> BaseNetwork:
+        return self.network
 
     def classifyImageWithModel(image, config: ClassifierConfig) -> None:
         pass
@@ -81,17 +103,23 @@ class ClassificationMap:
 
     def __init__(self) -> None:
 
-        self._classifcations = {
+        self._classifcations: Dict[str, BaseClassification] = {
             'building': BuildingClassification(),
             'vegetation': VegetationClassification(),
             'road': PavedRoadClassification()
         }
 
-        self._classifcationsByType = {
+        self._classifcationsByType: Dict[ClassificationType, BaseClassification] = {
             ClassificationType.BUILDING: BuildingClassification(),
             ClassificationType.VEGETATION: VegetationClassification(),
             ClassificationType.ROAD: PavedRoadClassification()
         }
+        
+    def getClassifications(self) -> None:
+        return self._classifcations
+    
+    def getClassificationsByType(self) -> None:
+        return self._classifcationsByType
 
     def getClassificationByName(self, name) -> BaseClassification:
         if name in self._classifcations:

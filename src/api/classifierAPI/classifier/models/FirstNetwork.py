@@ -2,8 +2,8 @@ import torch
 from .baseNetwork import BaseNetwork
 
 
-class ThreeClassNetwork(BaseNetwork):
-    def __init__(self):
+class FirstNetwork(BaseNetwork):
+    def __init__(self, numberOfClasses: int):
         super().__init__('three_class')
         layers = [
             torch.nn.Conv2d(3, 8, kernel_size=3, stride=1,
@@ -38,7 +38,7 @@ class ThreeClassNetwork(BaseNetwork):
             torch.nn.ReLU(),
             torch.nn.Linear(64, 32),
             torch.nn.ReLU(),
-            torch.nn.Linear(32, 3)
+            torch.nn.Linear(32, numberOfClasses)
         ]
 
         self.layers = torch.nn.ModuleList(layers)

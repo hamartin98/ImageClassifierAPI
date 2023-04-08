@@ -24,6 +24,9 @@ class BaseNetwork(nn.Module):
         self.load_state_dict(torch.load(path))
         print('Model loaded')
 
+    def loadToDevice(self, path: str, device) -> None:
+        self.load_state_dict(torch.load(path, map_location=device))
+
     def save(self, path: str) -> None:
         self._save_to_state_dict()
         torch.save(self.state_dict(), path)

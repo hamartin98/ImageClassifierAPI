@@ -35,6 +35,20 @@ def splitImage(image, rows, cols) -> None:
     return result
 
 
+def splitImageToTensors(image, rows, cols) -> None:
+    result = []
+
+    parts = splitImage(image, rows, cols)
+    for row in range(0, rows):
+        resultRow = []
+        for col in range(0, cols):
+            imageTensor = imageToTensor(parts[row][col])
+            resultRow.append(imageTensor)
+        result.append(resultRow)
+
+    return result
+
+
 def imageToTensor(image) -> None:
     transformedImage = image
 
