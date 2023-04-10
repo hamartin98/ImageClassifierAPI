@@ -8,7 +8,7 @@
       "name": "Python: Main Learn",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}\\src\\api\\classifierAPI\\classifier\\learnBase.py",
+      "program": "${workspaceFolder}\\src\\classifier\\learnBase.py",
       "console": "integratedTerminal",
       "justMyCode": true
     },
@@ -16,7 +16,7 @@
       "name": "Python: Django",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}\\src\\api\\classifierAPI\\manage.py",
+      "program": "${workspaceFolder}\\src\\manage.py",
       "args": ["runserver"],
       "django": true,
       "justMyCode": true

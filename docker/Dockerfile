@@ -23,4 +23,4 @@ RUN pip3 install --cache-dir $CACHE_DIR -r /requirements.txt
 
 EXPOSE 8000
 
-CMD ["python", "src/api/classifierAPI/manage.py", "runserver", "0.0.0.0:8000", "--noreload"]
+CMD ["python", "src/manage.py", "runserver", "0.0.0.0:8000", "--noreload"]

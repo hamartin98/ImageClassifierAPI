@@ -17,7 +17,7 @@ def teachMultipleModels(config: ClassifierConfig) -> None:
 if __name__ == '__main__':
     currDir = os.path.abspath(os.getcwd())  # Working directory
     path = os.path.normpath(os.path.join(
-        currDir, 'src/api/classifierAPI/' 'config.json'))
+        currDir, 'src/' 'config.json'))
     Config(path)
     
     config = ClassifierConfig(Config.getPath())
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     if not multiMode:
         '''currDir = os.path.abspath(os.getcwd())  # Working directory
         path = os.path.normpath(os.path.join(
-            currDir, 'src/api/classifierAPI/' 'config.json'))
+            currDir, 'src/' 'config.json'))
         Config(path)'''
 
         classification = BuildingClassification()
