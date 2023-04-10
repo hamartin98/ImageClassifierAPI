@@ -5,8 +5,8 @@ import cv2
 import numpy as np
 import os
 
-from config import Config
-from classifierConfig import ClassifierConfig
+from .config import Config
+from .classifierConfig import ClassifierConfig
 from .models.FirstNetwork import FirstNetwork
 
 from .imageUtils import splitImage, imageToTensor

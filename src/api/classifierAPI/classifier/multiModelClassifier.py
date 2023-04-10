@@ -4,12 +4,12 @@ import torch
 import cv2
 import numpy as np
 
-from config import Config
-from classifierConfig import ClassifierConfig
-from models.baseNetwork import BaseNetwork
-from classificationMap import ClassificationMap, BaseClassification
+from .config import Config
+from .classifierConfig import ClassifierConfig
+from .models.baseNetwork import BaseNetwork
+from .classificationMap import ClassificationMap, BaseClassification
 
-from imageUtils import splitImageToTensors
+from .imageUtils import splitImageToTensors
 
 
 class MultiModelClassifier:
@@ -39,9 +39,7 @@ class MultiModelClassifier:
         self.cols = cols
         self.originalData = image
 
-        self.prepareImage(image, rows, cols)
-
-        self.setupClassifiers()
+        self.prepareImage()
 
     def prepareImage(self) -> None:
 
@@ -49,7 +47,7 @@ class MultiModelClassifier:
             bytearray(self.originalData.read()), dtype="uint8")
         transformedImage = cv2.imdecode(transformedImage, cv2.IMREAD_COLOR)
 
-        self.preparedData = splitImageToTensors()
+        self.preparedData = splitImageToTensors(transformedImage, self.rows, self.cols)
 
     def classifyWithMultiModels(self, image, rows: int, cols: int) -> None:
         result = self.createResponseSkeleton(rows, cols)
@@ -72,13 +70,11 @@ class MultiModelClassifier:
                         output = network(imageTensor)
                         _, predictions = torch.max(output, 1)
                         res = predictions[0]
-                        print(f'Class: {res}')
 
                         result[row][col][key] = int(res)
 
         return result
 
     def createResponseSkeleton(self, rows: int, cols: int) -> None:
-        rowItem = {'building': 0, 'vegetation': 0, 'road': 0}
-        result = [[rowItem for row in range(rows)] for col in range(cols)]
+        result = [[dict() for row in range(rows)] for col in range(cols)]
         return result

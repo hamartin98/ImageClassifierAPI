@@ -4,7 +4,7 @@ from .baseNetwork import BaseNetwork
 
 class FirstNetwork(BaseNetwork):
     def __init__(self, numberOfClasses: int):
-        super().__init__('three_class')
+        super().__init__('first_network')
         layers = [
             torch.nn.Conv2d(3, 8, kernel_size=3, stride=1,
                             padding=1, padding_mode="reflect"),

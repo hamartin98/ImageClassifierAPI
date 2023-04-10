@@ -1,7 +1,7 @@
-from config import Config
+from .config import Config
 import os
 import json
-from classificationType import ClassificationType, ClassificationTypeUtils
+from .classificationType import ClassificationType, ClassificationTypeUtils
 
 
 class ClassifierConfig:

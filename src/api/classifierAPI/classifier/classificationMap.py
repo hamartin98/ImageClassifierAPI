@@ -1,11 +1,11 @@
 from typing import List, Dict
 import os
-from classifierConfig import ClassifierConfig
-from config import Config
-from labelItem import LabelItem
-from classificationType import ClassificationType
-from models.baseNetwork import BaseNetwork
-from models.FirstNetwork import FirstNetwork
+from .classifierConfig import ClassifierConfig
+from .config import Config
+from .labelItem import LabelItem
+from .classificationType import ClassificationType
+from .models.baseNetwork import BaseNetwork
+from .models.FirstNetwork import FirstNetwork
 
 
 class BaseClassification:

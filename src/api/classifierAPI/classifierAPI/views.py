@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from classifier.imageClassifier import ImageClassifier
+from classifier.multiModelClassifier import MultiModelClassifier
 
 
 @api_view(['GET'])
@@ -23,22 +23,15 @@ def classifyImage(request):
         cols = 1
         if 'cols' in request.data:    
             cols = int(request.data['cols'])
-
-        print(f'{rows} - {cols}')
-
-        imageClassifier = ImageClassifier()
-        print('classifier inited')
-        res = None
-        #res = imageClassifier.classifyImage(file)
-        #res = imageClassifier.classifyImageParts(file)
-        res = imageClassifier.splitAndClassify(file, rows, cols)
-        print(res)
-
+        
+        imageClassifier = MultiModelClassifier()
+        result = imageClassifier.classifyWithMultiModels(file, rows, cols)
+        
         response = {
             'message': 'Classification succesful',
             'rows': rows,
             'cols': cols,
-            'result': res
+            'result': result
         }
 
         return Response(response)
