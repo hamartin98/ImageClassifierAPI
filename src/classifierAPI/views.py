@@ -1,6 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from classifier.multiModelClassifier import MultiModelClassifier
+from classifier.teacher import Teacher
+from classifier.classificationMap import BaseClassification, ClassificationMap
+from classifier.classificationType import ClassificationTypeUtils
+from .serializers import ConfigSerializer
+from classifier.classifierConfig import ClassifierConfig
 
 
 @api_view(['GET'])
@@ -19,14 +24,14 @@ def classifyImage(request):
         rows = 1
         if 'rows' in request.data:
             rows = int(request.data['rows'])
-            
+
         cols = 1
-        if 'cols' in request.data:    
+        if 'cols' in request.data:
             cols = int(request.data['cols'])
-        
+
         imageClassifier = MultiModelClassifier()
         result = imageClassifier.classifyWithMultiModels(file, rows, cols)
-        
+
         response = {
             'message': 'Classification succesful',
             'rows': rows,
@@ -44,3 +49,41 @@ def classifyImage(request):
         response = Response({'error': f'Error happened: {e}'})
         response.status_code = 400
         return response
+
+
+@api_view(['POST'])
+def singleClassTeach(request):
+    try:
+        print(request.data)
+
+        configValidator = ConfigSerializer(data=request.data)
+        if not configValidator.is_valid():
+            response = Response(
+                {'error': f'Validation errors happened: {configValidator.errors}'})
+            response.status_code = 400
+            return response
+
+        classificationType = ClassificationTypeUtils.fromString(request.data['type'])
+        classification: BaseClassification = ClassificationMap.getClassificationByType(ClassificationMap(),
+            classificationType)
+        
+        config = ClassifierConfig(None)
+        classification.configureAndSetupNetwork(config)
+        
+        config.setFromJson(request.data)
+        teacher = Teacher(classification, config)
+        # TODO: determine by type what to do
+        teacher.trainAndTest()
+
+        response = {
+            'message': 'Teaching started, for more information call the teachingStatus API'
+        }
+
+        return Response(response)
+    except Exception as e:
+        print(e)
+        response = Response({'error': f'Error happened: {e}'})
+        response.status_code = 400
+        return response
+
+# TODO: Create endpoint to get active training status info

@@ -76,6 +76,11 @@ class ClassifierConfig:
 
         if 'batchSize' in configData:
             self.setBatchSize(configData['batchSize'])
+            
+        if 'type' in configData:
+            self.setType(configData['type'])
+            
+        self.originalJsonData = configData
 
     def overrideFromEnv(self) -> None:
         self.setModelPath(os.environ.get('MODEL_PATH'))
@@ -200,11 +205,14 @@ class ClassifierConfig:
     def innerOverrideToType(self, type: ClassificationType) -> None:
         data = None
         if type == ClassificationType.BUILDING:
-            data = self.originalJsonData['building']
+            if 'building' in self.originalJsonData:
+                data = self.originalJsonData['building']
         elif type == ClassificationType.VEGETATION:
-            data = self.originalJsonData['vegetation']
+            if 'vegetation' in self.originalJsonData:
+                data = self.originalJsonData['vegetation']
         elif type == ClassificationType.ROAD:
-            data = self.originalJsonData['road']
+            if 'road' in self.originalJsonData:
+                data = self.originalJsonData['road']
 
         if data:
             self.overrideToType(data, type)

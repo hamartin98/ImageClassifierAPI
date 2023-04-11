@@ -4,14 +4,14 @@ import torch.optim as optim
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
-from datasets.customDataset import CustomDataset
-from models.FirstNetwork import FirstNetwork
-from datasetUtils import splitDataset
-from classifierConfig import ClassifierConfig
-from classificationMap import (
+from .datasets.customDataset import CustomDataset
+from .datasetUtils import splitDataset
+from .classifierConfig import ClassifierConfig
+from .classificationMap import (
     BaseClassification)
+from .classificationType import ClassificationType
 
-from models.baseNetwork import BaseNetwork
+from .models.baseNetwork import BaseNetwork
 from timeit import default_timer as timer
 import datetime
 
@@ -20,13 +20,14 @@ class Teacher:
     def __init__(self, classification: BaseClassification, config: ClassifierConfig = None) -> None:
         self.classification = classification
         self.config = classification.getConfigutation()
+        
         if config:
             self.config = config
+        
         self.config.innerOverrideToType(self.classification.type)
 
         self.setupDevice()
 
-        #self.network: BaseNetwork = FirstNetwork(self.classification.getClassNum())
         self.network: BaseNetwork = self.classification.getNetwork()
         self.classes: tuple = self.classification.getClassLabelsTuple()
         self.criterion = nn.CrossEntropyLoss()

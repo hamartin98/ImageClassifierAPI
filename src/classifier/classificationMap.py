@@ -62,7 +62,7 @@ class BaseClassification:
 
     def isConfigured(self) -> bool:
         return self.configuration is not None and self.configuration.getType() == self.type
-    
+
     def getConfigutation(self) -> ClassifierConfig:
         return self.configuration
 
@@ -74,7 +74,6 @@ class BaseClassification:
 
     def classifyImagesWithModel(images, config: ClassifierConfig) -> None:
         pass
-
 
     # TODO: Fix path issues
     def saveModel(self) -> None:
@@ -89,7 +88,7 @@ class BaseClassification:
                 self.network.save(savePath)
             else:
                 print('Error saving model, network not found')
-                
+
     def loadModel(self) -> None:
         print('TODO: implement model load')
 
