@@ -1,3 +1,4 @@
+from typing import List
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -10,6 +11,7 @@ from .classifierConfig import ClassifierConfig
 from .classificationMap import (
     BaseClassification)
 from .classificationType import ClassificationType
+from .imagePlotterUtils import ImagePlotterUtils
 
 from .models.baseNetwork import BaseNetwork
 from timeit import default_timer as timer
@@ -49,6 +51,9 @@ class Teacher:
 
         # send network to device
         self.network.to(self.device)
+        
+        self.lossData: List[float] = []
+        self.accuracyData: List[float] = []
 
     def setupDevice(self) -> None:
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -95,7 +100,11 @@ class Teacher:
         trainingStr = str(datetime.timedelta(seconds=round(trainingTime)))
         print('Finished Training')
         print(f'Training duration: {trainingStr}')
-
+        
+        print('Plotting')
+        ImagePlotterUtils.plotLossAndAccuracy(self.lossData, self.accuracyData)
+        print('Plotted')
+        
         self.classification.saveModel()
 
         self.test()
@@ -143,6 +152,9 @@ class Teacher:
 
         testLoss /= numBatches
         correct /= size
+        
+        self.lossData.append(testLoss)
+        self.accuracyData.append(correct)
 
         print(
             f'Test error: \n Accuracy: {(100 * correct):>0.1f} %, Avg loss: {testLoss:>8f} \n')
