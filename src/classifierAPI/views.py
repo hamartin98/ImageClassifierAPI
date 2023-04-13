@@ -6,6 +6,7 @@ from classifier.classificationMap import BaseClassification, ClassificationMap
 from classifier.classificationType import ClassificationTypeUtils
 from .serializers import ConfigSerializer
 from classifier.classifierConfig import ClassifierConfig
+from .responseThenContinue import ResponseThenContinue
 
 
 @api_view(['GET'])
@@ -68,18 +69,18 @@ def singleClassTeach(request):
             classificationType)
         
         config = ClassifierConfig(None)
+        config.setFromJson(request.data)
         classification.configureAndSetupNetwork(config)
         
-        config.setFromJson(request.data)
         teacher = Teacher(classification, config)
         # TODO: determine by type what to do
-        teacher.trainAndTest()
-
-        response = {
-            'message': 'Teaching started, for more information call the teachingStatus API'
+        
+        message = {
+            'message': 'Teaching started, for more information call the teachingStatus endpoint'
         }
-
-        return Response(response)
+        
+        return ResponseThenContinue(message, teacher.trainAndTest)
+    
     except Exception as e:
         print(e)
         response = Response({'error': f'Error happened: {e}'})
