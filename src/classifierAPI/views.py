@@ -79,7 +79,7 @@ def singleClassTeach(request):
             'message': 'Teaching started, for more information call the teachingStatus endpoint'
         }
         
-        return ResponseThenContinue(message, teacher.trainAndTest)
+        return ResponseThenContinue(message, teacher.train)
     
     except Exception as e:
         print(e)
