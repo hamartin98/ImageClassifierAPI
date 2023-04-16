@@ -17,9 +17,11 @@ class ClassifierConfig:
             'dataPath': 'base_data/1000_b - SG',
             'imageWidth': 62,
             'imageHeight': 62,
-            'testRatio': 0.5,
+            'trainRatio': 0.7,
+            'testRatio': 0.1,
+            'valRatio': 0.2,
             'saveModel': False,
-            'loadModel': True,
+            'loadModel': False,
             'dataLoaderWorkers': 2,
             'learningRate': 0.001,
             'epochs': 50,
@@ -31,7 +33,7 @@ class ClassifierConfig:
         if fileName:
             self.setFromFile(fileName)
         self.overrideFromEnv()
-        self.print()
+        #self.print()
 
     def setFromFile(self, fileName: str) -> None:
         try:
@@ -55,8 +57,14 @@ class ClassifierConfig:
         if 'imageHeight' in configData:
             self.setImageHeight(configData['imageHeight'])
 
+        if 'trainRatio' in configData:
+            self.setTrainRatio(configData['trainRatio'])
+
         if 'testRatio' in configData:
             self.setTestRatio(configData['testRatio'])
+
+        if 'valRatio' in configData:
+            self.setValRatio(configData['valRatio'])
 
         if 'saveModel' in configData:
             self.setSaveModel(configData['saveModel'])
@@ -89,7 +97,9 @@ class ClassifierConfig:
         self.setDataPath(os.environ.get('DATA_PATH'))
         self.setImageWidth(os.environ.get('IMAGE_WIDTH'))
         self.setImageHeight(os.environ.get('IMAGE_HEIGHT'))
+        self.setTrainRatio(os.environ.get('TRAIN_RATIO'))
         self.setTestRatio(os.environ.get('TEST_RATIO'))
+        self.setValRatio(os.environ.get('VAL_RATIO'))
         self.setSaveModel(os.environ.get('SAVE_MODEL'))
         self.setLoadModel(os.environ.get('LOAD_MODEL'))
         self.setDataLoaderWorkers(os.environ.get('DATA_LOADER_WORKERS'))
@@ -138,12 +148,26 @@ class ClassifierConfig:
     def getImageSize(self) -> tuple:
         return (self.getImageWidth(), self.getImageHeight())
 
+    def setTrainRatio(self, newValue: float) -> None:
+        if Config.isSet(newValue):
+            self._config['trainRatio'] = newValue
+
+    def getTrainRatio(self) -> float:
+        return self._config['trainRatio']
+
     def setTestRatio(self, newValue: float) -> None:
         if Config.isSet(newValue):
             self._config['testRatio'] = newValue
 
     def getTestRatio(self) -> float:
         return self._config['testRatio']
+
+    def setValRatio(self, newValue: float) -> None:
+        if Config.isSet(newValue):
+            self._config['valRatio'] = newValue
+
+    def getValRatio(self) -> None:
+        return self._config['valRatio']
 
     def setSaveModel(self, newValue: bool) -> None:
         if Config.isSet(newValue):

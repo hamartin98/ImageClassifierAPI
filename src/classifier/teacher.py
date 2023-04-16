@@ -6,7 +6,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
 from .datasets.customDataset import CustomDataset
-from .utils.datasetUtils import splitDataset
+from .utils.datasetUtils import splitDataSet
 from .config.classifierConfig import ClassifierConfig
 from .classificationMap import (
     BaseClassification)
@@ -42,10 +42,13 @@ class Teacher:
         self.dataSet = CustomDataset(path=self.config.getDataPath(), classes=self.classes,
                                      imgDim=self.config.getImageSize(), transform=self.transform)
 
-        self.dataSets = splitDataset(
-            self.dataSet, testSize=self.config.getTestRatio())
+        trainRatio = config.getTrainRatio()
+        testRatio = config.getTestRatio()
+        valRatio = config.getValRatio()
+        self.dataSets = splitDataSet(
+            self.dataSet, trainRatio, valRatio, testRatio)
         self.dataLoaders = {x: DataLoader(
-            self.dataSets[x], self.config.getBatchSize(), shuffle=True, num_workers=self.config.getDataLoaderWorkers()) for x in ['train', 'test']}
+            self.dataSets[x], self.config.getBatchSize(), shuffle=True, num_workers=self.config.getDataLoaderWorkers()) for x in ['train', 'val', 'test']}
 
         self.classification.loadModel()
 
@@ -65,6 +68,8 @@ class Teacher:
         ActiveTrainingInfo.setStartTime(TimeUtils.getCurrentTime())
         ActiveTrainingInfo.setEndTime(0)
         ActiveTrainingInfo.setStatus(TrainingStatus.STARTED)
+        
+        self.config.print()
 
     def setupDevice(self) -> None:
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -113,7 +118,7 @@ class Teacher:
                 print(f'Epoch [ {epoch + 1} / {epochs} ]')
                 ActiveTrainingInfo.stepCurrentEpochs(1)
                 self.trainStep(self.dataLoaders['train'])
-                self.validationStep(self.dataLoaders['test'])
+                self.validationStep(self.dataLoaders['val'])
 
                 epochEndTime = timer()
                 epochTime = TimeUtils.getTimeDiffStr(
