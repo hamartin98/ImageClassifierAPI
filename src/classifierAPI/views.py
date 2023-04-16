@@ -5,7 +5,7 @@ from classifier.teacher import Teacher
 from classifier.classificationMap import BaseClassification, ClassificationMap
 from classifier.classificationType import ClassificationTypeUtils
 from .ConfigSerializer import ConfigSerializer
-from classifier.classifierConfig import ClassifierConfig
+from classifier.config.classifierConfig import ClassifierConfig
 from .responseThenContinue import ResponseThenContinue
 from classifier.activeTrainingInfo import ActiveTrainingInfo
 

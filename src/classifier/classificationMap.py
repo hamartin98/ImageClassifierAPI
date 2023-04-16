@@ -1,7 +1,7 @@
 from typing import List, Dict
 import os
-from .classifierConfig import ClassifierConfig
-from .config import Config
+from .config.classifierConfig import ClassifierConfig
+from .config.config import Config
 from .labelItem import LabelItem
 from .classificationType import ClassificationType
 from .models.baseNetwork import BaseNetwork

@@ -1,6 +1,6 @@
 import os
-from config import Config
-from classifierConfig import ClassifierConfig
+from .config.config import Config
+from .config.classifierConfig import ClassifierConfig
 
 from teacher import Teacher
 from classificationMap import BuildingClassification

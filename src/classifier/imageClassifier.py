@@ -5,11 +5,11 @@ import cv2
 import numpy as np
 import os
 
-from .config import Config
-from .classifierConfig import ClassifierConfig
+from .config.config import Config
+from .config.classifierConfig import ClassifierConfig
 from .models.FirstNetwork import FirstNetwork
 
-from .imageUtils import splitImage, imageToTensor
+from .utils.imageUtils import splitImage, imageToTensor
 
 
 class ImageClassifier():

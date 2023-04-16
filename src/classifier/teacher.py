@@ -6,14 +6,14 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
 from .datasets.customDataset import CustomDataset
-from .datasetUtils import splitDataset
-from .classifierConfig import ClassifierConfig
+from .utils.datasetUtils import splitDataset
+from .config.classifierConfig import ClassifierConfig
 from .classificationMap import (
     BaseClassification)
 
 from .models.baseNetwork import BaseNetwork
 from timeit import default_timer as timer
-from .timeUtils import TimeUtils
+from .utils.timeUtils import TimeUtils
 
 from .activeTrainingInfo import ActiveTrainingInfo, TrainingStatus
 

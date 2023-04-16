@@ -3,10 +3,10 @@ from typing import List, Dict, Any
 import json
 import threading
 
-from .classifierConfig import ClassifierConfig
-from .timeUtils import TimeUtils
-from .imagePlotterUtils import ImagePlotterUtils
-from .config import Config
+from .config.classifierConfig import ClassifierConfig
+from .utils.timeUtils import TimeUtils
+from .utils.imagePlotterUtils import ImagePlotterUtils
+from .config.config import Config
 
 
 class TrainingStatus(IntEnum):

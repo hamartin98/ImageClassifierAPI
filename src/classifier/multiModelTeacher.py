@@ -1,5 +1,5 @@
 from typing import Dict
-from classifierConfig import ClassifierConfig
+from config.classifierConfig import ClassifierConfig
 from classificationMap import (
     BaseClassification)
 

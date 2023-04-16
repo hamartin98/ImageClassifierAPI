@@ -4,12 +4,12 @@ import torch
 import cv2
 import numpy as np
 
-from .config import Config
-from .classifierConfig import ClassifierConfig
+from .config.config import Config
+from .config.classifierConfig import ClassifierConfig
 from .models.baseNetwork import BaseNetwork
 from .classificationMap import ClassificationMap, BaseClassification
 
-from .imageUtils import splitImageToTensors
+from .utils.imageUtils import splitImageToTensors
 
 
 class MultiModelClassifier:
