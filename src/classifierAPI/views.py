@@ -4,14 +4,16 @@ from classifier.multiModelClassifier import MultiModelClassifier
 from classifier.teacher import Teacher
 from classifier.classificationMap import BaseClassification, ClassificationMap
 from classifier.classificationType import ClassificationTypeUtils
-from .serializers import ConfigSerializer
+from .ConfigSerializer import ConfigSerializer
 from classifier.classifierConfig import ClassifierConfig
 from .responseThenContinue import ResponseThenContinue
+from classifier.activeTrainingInfo import ActiveTrainingInfo
 
 
 @api_view(['GET'])
 def status(request):
     response = {'status': 'OK'}
+
     return Response(response)
 
 
@@ -41,21 +43,29 @@ def classifyImage(request):
         }
 
         return Response(response)
-    except KeyError:
-        response = Response({'error': 'Request has no resource file atteched'})
+    except KeyError as exception:
+        response = Response({'error': f'{exception}'})
         response.status_code = 400
+
         return response
-    except Exception as e:
-        print(e)
-        response = Response({'error': f'Error happened: {e}'})
+    except Exception as exception:
+        print(exception)
+        response = Response({'error': f'Error happened: {exception}'})
         response.status_code = 400
+
         return response
 
 
 @api_view(['POST'])
 def singleClassTeach(request):
     try:
-        print(request.data)
+        if not ActiveTrainingInfo.canStartNew():
+            response = Response(
+                {'message': f'Another Training is in progress, cannot start new one until its fininshed'}
+            )
+            response.status_code = 201
+
+            return response
 
         configValidator = ConfigSerializer(data=request.data)
         if not configValidator.is_valid():
@@ -64,27 +74,42 @@ def singleClassTeach(request):
             response.status_code = 400
             return response
 
-        classificationType = ClassificationTypeUtils.fromString(request.data['type'])
+        classificationType = ClassificationTypeUtils.fromString(
+            request.data['type'])
         classification: BaseClassification = ClassificationMap.getClassificationByType(ClassificationMap(),
-            classificationType)
-        
+                                                                                       classificationType)
+
         config = ClassifierConfig(None)
         config.setFromJson(request.data)
         classification.configureAndSetupNetwork(config)
-        
+
         teacher = Teacher(classification, config)
-        # TODO: determine by type what to do
-        
+
         message = {
-            'message': 'Teaching started, for more information call the teachingStatus endpoint'
+            'message': 'Training started, for more information call the trainingStatus endpoint'
         }
-        
+
         return ResponseThenContinue(message, teacher.train)
-    
-    except Exception as e:
-        print(e)
-        response = Response({'error': f'Error happened: {e}'})
+
+    except Exception as exception:
+        print(exception)
+        response = Response({'error': f'Error happened: {exception}'})
         response.status_code = 400
+
         return response
 
-# TODO: Create endpoint to get active training status info
+
+@api_view(['GET'])
+def getTrainingStatus(request):
+    try:
+        ActiveTrainingInfo.print()
+        result = ActiveTrainingInfo.toJson()
+        response = Response({'trainingStatus': result})
+
+        return response
+    except Exception as exception:
+        print(exception)
+        response = Response({'error': f'Error happened: {exception}'})
+        response.status_code = 400
+
+        return response

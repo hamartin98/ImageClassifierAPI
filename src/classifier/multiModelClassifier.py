@@ -47,7 +47,8 @@ class MultiModelClassifier:
             bytearray(self.originalData.read()), dtype="uint8")
         transformedImage = cv2.imdecode(transformedImage, cv2.IMREAD_COLOR)
 
-        self.preparedData = splitImageToTensors(transformedImage, self.rows, self.cols)
+        self.preparedData = splitImageToTensors(
+            transformedImage, self.rows, self.cols)
 
     def classifyWithMultiModels(self, image, rows: int, cols: int) -> None:
         result = self.createResponseSkeleton(rows, cols)

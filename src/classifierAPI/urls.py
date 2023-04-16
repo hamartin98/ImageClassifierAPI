@@ -33,5 +33,6 @@ urlpatterns = [
     path('api/status', views.status),
     path('api/classifyImage', views.classifyImage),
     path('api/trainModel', views.singleClassTeach),
+    path('api/trainingStatus', views.getTrainingStatus),
     path('', schema_view.with_ui('swagger', cache_timeout=0))
 ]

@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 from .config import Config
 import os
 import json
@@ -10,7 +12,7 @@ class ClassifierConfig:
 
         self.originalJsonData = None
 
-        self._config = {
+        self._config: Dict[str, Any] = {
             'modelPath': 'model_latest.pth',
             'dataPath': 'base_data/1000_b - SG',
             'imageWidth': 62,
@@ -31,7 +33,7 @@ class ClassifierConfig:
         self.overrideFromEnv()
         self.print()
 
-    def setFromFile(self, fileName) -> None:
+    def setFromFile(self, fileName: str) -> None:
         try:
             with open(fileName, 'r') as configFile:
                 configData = json.load(configFile)
@@ -40,7 +42,7 @@ class ClassifierConfig:
         except OSError:
             print(f'Error opening config file: {fileName}')
 
-    def setFromJson(self, configData) -> None:
+    def setFromJson(self, configData: Dict[str, Any]) -> None:
         if 'modelPath' in configData:
             self.setModelPath(configData['modelPath'])
 
@@ -76,10 +78,10 @@ class ClassifierConfig:
 
         if 'batchSize' in configData:
             self.setBatchSize(configData['batchSize'])
-            
+
         if 'type' in configData:
             self.setType(configData['type'])
-            
+
         self.originalJsonData = configData
 
     def overrideFromEnv(self) -> None:
@@ -99,97 +101,97 @@ class ClassifierConfig:
     def print(self) -> None:
         print(json.dumps(self._config, indent=4, sort_keys=True))
 
-    def setModelPath(self, newValue) -> None:
+    def setModelPath(self, newValue: str) -> None:
         if Config.isSet(newValue):
             self._config['modelPath'] = newValue
 
-    def getModelPath(self) -> None:
+    def getModelPath(self) -> str:
         path = os.path.join(Config.getModelsPath(), self._config['modelPath'])
         if Config.getIsRelativePath():
             return os.path.realpath(path)
         return os.path.abspath(path)
 
-    def setDataPath(self, newValue) -> None:
+    def setDataPath(self, newValue: str) -> None:
         if Config.isSet(newValue):
             self._config['dataPath'] = newValue
 
-    def getDataPath(self) -> None:
+    def getDataPath(self) -> str:
         path = os.path.join(Config.getImagesPath(), self._config['dataPath'])
         if Config.getIsRelativePath():
             return os.path.realpath(path)
         return os.path.abspath(path)
 
-    def setImageWidth(self, newValue) -> None:
+    def setImageWidth(self, newValue: int) -> None:
         if Config.isSet(newValue):
             self._config['imageWidth'] = newValue
 
-    def getImageWidth(self) -> None:
+    def getImageWidth(self) -> int:
         return self._config['imageWidth']
 
-    def setImageHeight(self, newValue) -> None:
+    def setImageHeight(self, newValue: int) -> None:
         if Config.isSet(newValue):
             self._config['imageHeight'] = newValue
 
-    def getImageHeight(self) -> None:
+    def getImageHeight(self) -> int:
         return self._config['imageHeight']
 
-    def getImageSize(self) -> None:
+    def getImageSize(self) -> tuple:
         return (self.getImageWidth(), self.getImageHeight())
 
-    def setTestRatio(self, newValue) -> None:
+    def setTestRatio(self, newValue: float) -> None:
         if Config.isSet(newValue):
             self._config['testRatio'] = newValue
 
-    def getTestRatio(self) -> None:
+    def getTestRatio(self) -> float:
         return self._config['testRatio']
 
-    def setSaveModel(self, newValue) -> None:
+    def setSaveModel(self, newValue: bool) -> None:
         if Config.isSet(newValue):
             self._config['saveModel'] = newValue
 
-    def getSaveModel(self) -> None:
+    def getSaveModel(self) -> bool:
         return self._config['saveModel']
 
-    def setLoadModel(self, newValue) -> None:
+    def setLoadModel(self, newValue: bool) -> None:
         if Config.isSet(newValue):
             self._config['loadModel'] = newValue
 
-    def getLoadModel(self) -> None:
+    def getLoadModel(self) -> bool:
         return self._config['loadModel']
 
-    def setDataLoaderWorkers(self, newValue) -> None:
+    def setDataLoaderWorkers(self, newValue: int) -> None:
         if Config.isSet(newValue):
             self._config['dataLoaderWorkers'] = newValue
 
-    def getDataLoaderWorkers(self) -> None:
+    def getDataLoaderWorkers(self) -> int:
         return self._config['dataLoaderWorkers']
 
-    def setLearningRate(self, newValue) -> None:
+    def setLearningRate(self, newValue: float) -> None:
         if Config.isSet(newValue):
             self._config['learningRate'] = newValue
 
-    def getLearningRate(self) -> None:
+    def getLearningRate(self) -> float:
         return self._config['learningRate']
 
-    def setEpochs(self, newValue) -> None:
+    def setEpochs(self, newValue: int) -> None:
         if Config.isSet(newValue):
             self._config['epochs'] = newValue
 
-    def getEpochs(self) -> None:
+    def getEpochs(self) -> int:
         return self._config['epochs']
 
-    def setMomentum(self, newValue) -> None:
+    def setMomentum(self, newValue: float) -> None:
         if Config.isSet(newValue):
             self._config['momentum'] = newValue
 
-    def getMomentum(self) -> None:
+    def getMomentum(self) -> float:
         return self._config['momentum']
 
-    def setBatchSize(self, newValue) -> None:
+    def setBatchSize(self, newValue) -> int:
         if Config.isSet(newValue):
             self._config['batchSize'] = newValue
 
-    def getBatchSize(self) -> None:
+    def getBatchSize(self) -> int:
         return self._config['batchSize']
 
     def setType(self, newValue) -> None:
@@ -223,3 +225,9 @@ class ClassifierConfig:
 
     def getType(self) -> ClassificationType:
         return self._config['type']
+
+    def getAsJson(self) -> Dict[str, Any]:
+        asJson = self._config
+        type = asJson['type']
+        asJson['type'] = str(type)
+        return asJson

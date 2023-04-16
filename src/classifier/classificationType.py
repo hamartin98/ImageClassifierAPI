@@ -7,6 +7,9 @@ class ClassificationType(IntEnum):
     VEGETATION = 2
     ROAD = 3
 
+    def __str__(self) -> str:
+        return str(self.name).lower()
+
 
 class ClassificationTypeUtils:
     @staticmethod

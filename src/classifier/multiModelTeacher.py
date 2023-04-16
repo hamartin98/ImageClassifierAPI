@@ -29,4 +29,4 @@ class MultiModelTeacher:
             print(key)
             classification.configureAndSetupNetwork(self.baseConfig)
             teacher = Teacher(classification)
-            teacher.trainAndTest()
+            teacher.train()

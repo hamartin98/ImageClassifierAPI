@@ -14,6 +14,7 @@ class ImagePlotterUtils:
         plt.xlabel('Epoch')
         plt.legend(loc='lower right')
         plt.savefig(savePath)
+        plt.close()
 
     @staticmethod
     def plotLossData(lossData: List[float], savePath: str = 'loss.png') -> None:
@@ -23,6 +24,7 @@ class ImagePlotterUtils:
         plt.xlabel('Epoch')
         plt.legend(loc='lower right')
         plt.savefig(savePath)
+        plt.close()
 
     @staticmethod
     def plotAccuracyData(accuracyData: List[float], savePath: str = 'accuracy.png') -> None:
@@ -32,3 +34,4 @@ class ImagePlotterUtils:
         plt.xlabel('Epoch')
         plt.legend(loc='lower right')
         plt.savefig(savePath)
+        plt.close()

@@ -2,23 +2,24 @@ import json
 import os
 from typing import Any
 
+
 class Config:
     _inited = False
     _path = None
     _config = {
-            'basePath': 'data',
-            'isRelativePath': True
-        }
+        'basePath': 'data',
+        'isRelativePath': True
+    }
 
     def __init__(self, fileName) -> None:
-        
+
         Config._path = fileName
         if not Config._inited:
             Config.setFromFile(fileName)
             Config.overrideFromEnv()
             Config.print()
             Config._inited = True
-            
+
     @staticmethod
     def isSet(value: Any) -> bool:
         return value is not None and value != ''
@@ -71,7 +72,14 @@ class Config:
         if Config.getIsRelativePath():
             return os.path.realpath(path)
         return os.path.abspath(path)
-    
+
+    @staticmethod
+    def getLearningInfoPath() -> None:
+        path = os.path.join(Config._config['basePath'], 'learningInfo')
+        if Config.getIsRelativePath():
+            return os.path.realpath(path)
+        return os.path.abspath(path)
+
     @staticmethod
     def getPath() -> None:
         return Config._path

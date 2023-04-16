@@ -80,7 +80,8 @@ class BaseClassification:
         if self.configuration.getSaveModel():
             if self.network:
                 basePath = Config.getModelsPath()
-                modelName = self.network.getId() + '_' + self.name + '_2.pth'
+                #modelName = self.network.getId() + '_' + self.name + '_2.pth'
+                modelName = self.configuration.getModelPath()
                 basePath = 'data\models'
                 #savePath = os.path.normpath(os.path.abspath(os.path.join(basePath, modelName)))
                 savePath = os.path.join(basePath, modelName)

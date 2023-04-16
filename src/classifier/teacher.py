@@ -10,21 +10,21 @@ from .datasetUtils import splitDataset
 from .classifierConfig import ClassifierConfig
 from .classificationMap import (
     BaseClassification)
-from .classificationType import ClassificationType
-from .imagePlotterUtils import ImagePlotterUtils
 
 from .models.baseNetwork import BaseNetwork
 from timeit import default_timer as timer
-import datetime
+from .timeUtils import TimeUtils
+
+from .activeTrainingInfo import ActiveTrainingInfo, TrainingStatus
 
 
 class Teacher:
     def __init__(self, classification: BaseClassification, config: ClassifierConfig = None) -> None:
         self.classification = classification
-        self.config = classification.getConfigutation()
 
         if config:
-            self.config = config
+            self.classification.configure(config)
+            self.config = self.classification.getConfigutation()
 
         self.config.innerOverrideToType(self.classification.type)
 
@@ -51,9 +51,20 @@ class Teacher:
 
         # send network to device
         self.network.to(self.device)
-        
+
         self.lossData: List[float] = []
         self.accuracyData: List[float] = []
+        self.epochTimes: List[str] = []
+
+        # setup training info tracker
+        ActiveTrainingInfo.reset()
+        ActiveTrainingInfo.setConfig(self.config)
+        ActiveTrainingInfo.setName('Training')
+        ActiveTrainingInfo.setCurrentEpochs(0)
+        ActiveTrainingInfo.setTotalEpochs(self.config.getEpochs())
+        ActiveTrainingInfo.setStartTime(TimeUtils.getCurrentTime())
+        ActiveTrainingInfo.setEndTime(0)
+        ActiveTrainingInfo.setStatus(TrainingStatus.STARTED)
 
     def setupDevice(self) -> None:
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -64,7 +75,6 @@ class Teacher:
         correctPred = {classname: 0 for classname in self.classes}
         totalPred = {classname: 0 for classname in self.classes}
 
-        # again no gradients needed
         self.network.eval()
         with torch.no_grad():
             for data in self.dataLoaders['test']:
@@ -81,33 +91,53 @@ class Teacher:
                     totalPred[self.classes[label]] += 1
 
         # print accuracy for each class
+        accuracyPerClass = {}
+
         for className, correctCount in correctPred.items():
             accuracy = 100 * float(correctCount) / totalPred[className]
+            accuracyPerClass[className] = accuracy
             print(f'Accuracy for class: {className:5s} is {accuracy:.1f} %')
 
+        ActiveTrainingInfo.setAccuracyPerClass(accuracyPerClass)
+
     def train(self) -> None:
-        self.network.train()
-        startTime = timer()
+        try:
+            ActiveTrainingInfo.setStatus(TrainingStatus.RUNNING)
+            self.network.train()
+            startTime = timer()
 
-        epochs = self.config.getEpochs()
-        for epoch in range(epochs):
-            print(f'Epoch [ {epoch + 1} / {epochs} ]')
-            self.trainStep(self.dataLoaders['train'])
-            self.testStep(self.dataLoaders['test'])
+            epochs = self.config.getEpochs()
+            for epoch in range(epochs):
+                epochStartTime = timer()
 
-        endTime = timer()
-        trainingTime = endTime - startTime
-        trainingStr = str(datetime.timedelta(seconds=round(trainingTime)))
-        print('Finished Training')
-        print(f'Training duration: {trainingStr}')
-        
-        print('Plotting')
-        ImagePlotterUtils.plotLossAndAccuracy(self.lossData, self.accuracyData)
-        print('Plotted')
-        
-        self.classification.saveModel()
+                print(f'Epoch [ {epoch + 1} / {epochs} ]')
+                ActiveTrainingInfo.stepCurrentEpochs(1)
+                self.trainStep(self.dataLoaders['train'])
+                self.validationStep(self.dataLoaders['test'])
 
-        self.test()
+                epochEndTime = timer()
+                epochTime = TimeUtils.getTimeDiffStr(
+                    epochStartTime, epochEndTime)
+                self.epochTimes.append(epochTime)
+                ActiveTrainingInfo.addEpochTime(epochTime)
+                print(f'Epoch duration: {epochTime}')
+
+            endTime = timer()
+            trainingTimeStr = TimeUtils.getTimeDiffStr(startTime, endTime)
+            ActiveTrainingInfo.setEndTime(TimeUtils.getCurrentTime())
+            ActiveTrainingInfo.setStatus(TrainingStatus.FINISHED)
+            print('Finished Training')
+            print(f'Training duration: {trainingTimeStr}')
+
+            self.classification.saveModel()
+
+            self.test()
+
+            ActiveTrainingInfo.saveResultData()
+        except Exception as exception:
+            ActiveTrainingInfo.setError(exception)
+            ActiveTrainingInfo.saveResultData()
+            raise exception
 
     def trainStep(self, dataLoader) -> None:
         size = len(dataLoader.dataset)
@@ -126,12 +156,12 @@ class Teacher:
             self.optimizer.step()
 
             runningLoss += loss.item()
-            if batch % 200 == 199:
-                print(
-                    f'[{batch + 1:5d} / {size} ] loss: {runningLoss / 200:.3f}')
-                runningLoss = 0.0
 
-    def testStep(self, dataLoader):
+            if batch % 100 == 0:
+                loss, current = loss.item(), (batch + 1) * len(inputs)
+                print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+
+    def validationStep(self, dataLoader):
         size = len(dataLoader.dataset)
         numBatches = len(dataLoader)
         testLoss = 0.0
@@ -152,9 +182,12 @@ class Teacher:
 
         testLoss /= numBatches
         correct /= size
-        
+
         self.lossData.append(testLoss)
         self.accuracyData.append(correct)
+
+        ActiveTrainingInfo.addRunningLossData(testLoss)
+        ActiveTrainingInfo.addRunningAccuracyData(correct)
 
         print(
             f'Test error: \n Accuracy: {(100 * correct):>0.1f} %, Avg loss: {testLoss:>8f} \n')
