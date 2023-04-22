@@ -1,19 +1,22 @@
+import cv2
+import numpy as np
 from typing import Dict
 
 import torch
-import cv2
-import numpy as np
 
+from .classificationMap import ClassificationMap, BaseClassification
 from .config.config import Config
 from .config.classifierConfig import ClassifierConfig
 from .models.baseNetwork import BaseNetwork
-from .classificationMap import ClassificationMap, BaseClassification
-
 from .utils.imageUtils import splitImageToTensors
 
 
 class MultiModelClassifier:
+    '''Classify images with multiple models'''
+
     def __init__(self) -> None:
+        '''Basic initialization'''
+
         self.baseConfig = ClassifierConfig(Config.getPath())
 
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -28,6 +31,8 @@ class MultiModelClassifier:
         self.setupClassifiers()
 
     def setupClassifiers(self) -> None:
+        '''Setup each classifier'''
+
         classifications: Dict[str,
                               BaseClassification] = self.classifications.getClassifications()
 
@@ -35,6 +40,8 @@ class MultiModelClassifier:
             classification.configureAndSetupNetwork(self.baseConfig)
 
     def dataSetup(self, image, rows: int, cols: int) -> None:
+        '''Prepare data'''
+
         self.rows = rows
         self.cols = cols
         self.originalData = image
@@ -42,6 +49,7 @@ class MultiModelClassifier:
         self.prepareImage()
 
     def prepareImage(self) -> None:
+        '''Prepare the given image to classification'''
 
         transformedImage = np.asarray(
             bytearray(self.originalData.read()), dtype="uint8")
@@ -51,6 +59,8 @@ class MultiModelClassifier:
             transformedImage, self.rows, self.cols)
 
     def classifyWithMultiModels(self, image, rows: int, cols: int) -> None:
+        '''Classify images with multiple models'''
+
         result = self.createResponseSkeleton(rows, cols)
 
         self.dataSetup(image, rows, cols)
@@ -77,5 +87,7 @@ class MultiModelClassifier:
         return result
 
     def createResponseSkeleton(self, rows: int, cols: int) -> None:
+        '''Create response dictionary with the given rows and columns'''
+
         result = [[dict() for row in range(rows)] for col in range(cols)]
         return result

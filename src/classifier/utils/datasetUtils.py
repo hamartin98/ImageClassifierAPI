@@ -1,7 +1,10 @@
-from typing import Dict, Any
 from sklearn.model_selection import train_test_split
+from typing import Dict
+
 from torch.utils.data import Subset, random_split
 import torch
+
+'''Collection of dataset related utility functions'''
 
 
 def splitDatasetTrainTest(dataSet, testSize: float) -> Dict[str, Subset]:
@@ -28,5 +31,5 @@ def splitDataSet(dataSet, trainRatio: float, valRatio: float, testRatio: float) 
     dataSets['train'] = Subset(dataSet, trainIdx.indices)
     dataSets['test'] = Subset(dataSet, testIdx.indices)
     dataSets['val'] = Subset(dataSet, valIdx.indices)
-    
+
     return dataSets

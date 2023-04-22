@@ -1,14 +1,16 @@
+import json
+import os
 from typing import Dict, Any
 
 from .config import Config
-import os
-import json
 from ..classificationType import ClassificationType, ClassificationTypeUtils
 
 
 class ClassifierConfig:
+    '''Class to collect and manage configuration'''
 
-    def __init__(self, fileName) -> None:
+    def __init__(self, fileName: str = None) -> None:
+        '''Basic initialization'''
 
         self.originalJsonData = None
 
@@ -33,9 +35,11 @@ class ClassifierConfig:
         if fileName:
             self.setFromFile(fileName)
         self.overrideFromEnv()
-        #self.print()
+        # self.print()
 
     def setFromFile(self, fileName: str) -> None:
+        '''Set config values from the given file'''
+
         try:
             with open(fileName, 'r') as configFile:
                 configData = json.load(configFile)
@@ -45,6 +49,8 @@ class ClassifierConfig:
             print(f'Error opening config file: {fileName}')
 
     def setFromJson(self, configData: Dict[str, Any]) -> None:
+        '''Set config values from the given json data'''
+
         if 'modelPath' in configData:
             self.setModelPath(configData['modelPath'])
 
@@ -93,6 +99,8 @@ class ClassifierConfig:
         self.originalJsonData = configData
 
     def overrideFromEnv(self) -> None:
+        '''Override configuration values from environment'''
+
         self.setModelPath(os.environ.get('MODEL_PATH'))
         self.setDataPath(os.environ.get('DATA_PATH'))
         self.setImageWidth(os.environ.get('IMAGE_WIDTH'))
@@ -109,116 +117,178 @@ class ClassifierConfig:
         self.setBatchSize(os.environ.get('BATCH_SIZE'))
 
     def print(self) -> None:
+        '''Print the configuration as a formatted json'''
+
         print(json.dumps(self._config, indent=4, sort_keys=True))
 
     def setModelPath(self, newValue: str) -> None:
+        '''Set model path'''
+
         if Config.isSet(newValue):
             self._config['modelPath'] = newValue
 
     def getModelPath(self) -> str:
+        '''Get model path'''
+
         path = os.path.join(Config.getModelsPath(), self._config['modelPath'])
         if Config.getIsRelativePath():
             return os.path.realpath(path)
         return os.path.abspath(path)
 
     def setDataPath(self, newValue: str) -> None:
+        '''Set training data path'''
+
         if Config.isSet(newValue):
             self._config['dataPath'] = newValue
 
     def getDataPath(self) -> str:
+        '''Get training data path'''
+
         path = os.path.join(Config.getImagesPath(), self._config['dataPath'])
         if Config.getIsRelativePath():
             return os.path.realpath(path)
         return os.path.abspath(path)
 
     def setImageWidth(self, newValue: int) -> None:
+        '''Set image width'''
+
         if Config.isSet(newValue):
             self._config['imageWidth'] = newValue
 
     def getImageWidth(self) -> int:
+        '''Get image width'''
+
         return self._config['imageWidth']
 
     def setImageHeight(self, newValue: int) -> None:
+        '''Set image height'''
+
         if Config.isSet(newValue):
             self._config['imageHeight'] = newValue
 
     def getImageHeight(self) -> int:
+        '''Get image height'''
+
         return self._config['imageHeight']
 
     def getImageSize(self) -> tuple:
+        '''Get image size as a tuple in (width, height) format'''
+
         return (self.getImageWidth(), self.getImageHeight())
 
     def setTrainRatio(self, newValue: float) -> None:
+        '''Set training dataset ratio'''
+
         if Config.isSet(newValue):
             self._config['trainRatio'] = newValue
 
     def getTrainRatio(self) -> float:
+        '''Get training dataset ratio'''
+
         return self._config['trainRatio']
 
     def setTestRatio(self, newValue: float) -> None:
+        '''Set test dataset ratio'''
+
         if Config.isSet(newValue):
             self._config['testRatio'] = newValue
 
     def getTestRatio(self) -> float:
+        '''Get test dataset ratio'''
+
         return self._config['testRatio']
 
     def setValRatio(self, newValue: float) -> None:
+        '''Set validation dateset ratio'''
+
         if Config.isSet(newValue):
             self._config['valRatio'] = newValue
 
     def getValRatio(self) -> None:
+        '''Get validation dataset ratio'''
+
         return self._config['valRatio']
 
     def setSaveModel(self, newValue: bool) -> None:
+        '''Set path to save model to'''
+
         if Config.isSet(newValue):
             self._config['saveModel'] = newValue
 
     def getSaveModel(self) -> bool:
+        '''Get model save path'''
+
         return self._config['saveModel']
 
     def setLoadModel(self, newValue: bool) -> None:
+        '''Set whether to load an existing model'''
+
         if Config.isSet(newValue):
             self._config['loadModel'] = newValue
 
     def getLoadModel(self) -> bool:
+        '''Get load model status'''
+
         return self._config['loadModel']
 
     def setDataLoaderWorkers(self, newValue: int) -> None:
+        '''Set the number of dataloader workers'''
+
         if Config.isSet(newValue):
             self._config['dataLoaderWorkers'] = newValue
 
     def getDataLoaderWorkers(self) -> int:
+        '''Get the number of dataloader workers'''
+
         return self._config['dataLoaderWorkers']
 
     def setLearningRate(self, newValue: float) -> None:
+        '''Set learning rate'''
+
         if Config.isSet(newValue):
             self._config['learningRate'] = newValue
 
     def getLearningRate(self) -> float:
+        '''Get learning rate'''
+
         return self._config['learningRate']
 
     def setEpochs(self, newValue: int) -> None:
+        '''Set number of epochs'''
+
         if Config.isSet(newValue):
             self._config['epochs'] = newValue
 
     def getEpochs(self) -> int:
+        '''Get number of epochs'''
+
         return self._config['epochs']
 
     def setMomentum(self, newValue: float) -> None:
+        '''Set momentum'''
+
         if Config.isSet(newValue):
             self._config['momentum'] = newValue
 
     def getMomentum(self) -> float:
+        '''Get momentum'''
+
         return self._config['momentum']
 
     def setBatchSize(self, newValue) -> int:
+        '''Set number of batches'''
+
         if Config.isSet(newValue):
             self._config['batchSize'] = newValue
 
     def getBatchSize(self) -> int:
+        '''Get number of batches'''
+
         return self._config['batchSize']
 
     def setType(self, newValue) -> None:
+        '''Set classification type'''
+
         if Config.isSet(newValue):
             if isinstance(newValue, str):
                 self._config['type'] = ClassificationTypeUtils.fromString(
@@ -229,6 +299,8 @@ class ClassifierConfig:
                 self._config['type'] = ClassificationType.NONE
 
     def innerOverrideToType(self, type: ClassificationType) -> None:
+        '''Override current config to the given type'''
+
         data = None
         if type == ClassificationType.BUILDING:
             if 'building' in self.originalJsonData:
@@ -244,13 +316,19 @@ class ClassifierConfig:
             self.overrideToType(data, type)
 
     def overrideToType(self, data, type: ClassificationType) -> None:
+        '''Override the current configuration with the given value according to the given type'''
+
         self.setType(type)
         self.setFromJson(data)
 
     def getType(self) -> ClassificationType:
+        '''Get current classification type'''
+
         return self._config['type']
 
     def getAsJson(self) -> Dict[str, Any]:
+        '''Return configuration as a json dictionary'''
+
         asJson = self._config
         type = asJson['type']
         asJson['type'] = str(type)

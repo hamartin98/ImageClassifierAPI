@@ -1,25 +1,28 @@
+from timeit import default_timer as timer
 from typing import List
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
+import torchvision.transforms as transforms
 
-from .datasets.customDataset import CustomDataset
-from .utils.datasetUtils import splitDataSet
+from .activeTrainingInfo import ActiveTrainingInfo, TrainingStatus
 from .config.classifierConfig import ClassifierConfig
 from .classificationMap import (
     BaseClassification)
-
+from .datasets.customDataset import CustomDataset
 from .models.baseNetwork import BaseNetwork
-from timeit import default_timer as timer
+from .utils.datasetUtils import splitDataSet
 from .utils.timeUtils import TimeUtils
-
-from .activeTrainingInfo import ActiveTrainingInfo, TrainingStatus
 
 
 class Teacher:
+    '''Classification teacher class'''
+
     def __init__(self, classification: BaseClassification, config: ClassifierConfig = None) -> None:
+        '''Basic initialization'''
+
         self.classification = classification
 
         if config:
@@ -68,14 +71,18 @@ class Teacher:
         ActiveTrainingInfo.setStartTime(TimeUtils.getCurrentTime())
         ActiveTrainingInfo.setEndTime(0)
         ActiveTrainingInfo.setStatus(TrainingStatus.STARTED)
-        
+
         self.config.print()
 
     def setupDevice(self) -> None:
+        '''Setup CPU or GPU device if available'''
+
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print(f'Using device {self.device}')
 
     def test(self) -> None:
+        '''Test the current learning'''
+
         print('Testing')
         correctPred = {classname: 0 for classname in self.classes}
         totalPred = {classname: 0 for classname in self.classes}
@@ -106,6 +113,8 @@ class Teacher:
         ActiveTrainingInfo.setAccuracyPerClass(accuracyPerClass)
 
     def train(self) -> None:
+        '''Train the model'''
+
         try:
             ActiveTrainingInfo.setStatus(TrainingStatus.RUNNING)
             self.network.train()
@@ -144,7 +153,9 @@ class Teacher:
             ActiveTrainingInfo.saveResultData()
             raise exception
 
-    def trainStep(self, dataLoader) -> None:
+    def trainStep(self, dataLoader: DataLoader) -> None:
+        '''Single training step'''
+
         size = len(dataLoader.dataset)
         runningLoss = 0.0
         for batch, data in enumerate(dataLoader, 0):
@@ -167,6 +178,8 @@ class Teacher:
                 print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
     def validationStep(self, dataLoader):
+        '''Single validation step'''
+
         size = len(dataLoader.dataset)
         numBatches = len(dataLoader)
         testLoss = 0.0

@@ -1,17 +1,20 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from classifier.multiModelClassifier import MultiModelClassifier
-from classifier.teacher import Teacher
+
+from classifier.activeTrainingInfo import ActiveTrainingInfo
 from classifier.classificationMap import BaseClassification, ClassificationMap
 from classifier.classificationType import ClassificationTypeUtils
-from .ConfigSerializer import ConfigSerializer
 from classifier.config.classifierConfig import ClassifierConfig
+from classifier.multiModelClassifier import MultiModelClassifier
+from classifier.teacher import Teacher
+from .ConfigSerializer import ConfigSerializer
 from .responseThenContinue import ResponseThenContinue
-from classifier.activeTrainingInfo import ActiveTrainingInfo
 
 
 @api_view(['GET'])
 def status(request):
+    '''Get application status'''
+
     response = {'status': 'OK'}
 
     return Response(response)
@@ -19,6 +22,8 @@ def status(request):
 
 @api_view(['POST'])
 def classifyImage(request):
+    '''Split and classify each part of the given image'''
+
     try:
         file = request.data['image']
         print(request.data)
@@ -58,6 +63,8 @@ def classifyImage(request):
 
 @api_view(['POST'])
 def singleClassTeach(request):
+    '''Teach a single classification'''
+
     try:
         if not ActiveTrainingInfo.canStartNew():
             response = Response(
@@ -101,6 +108,8 @@ def singleClassTeach(request):
 
 @api_view(['GET'])
 def getTrainingStatus(request):
+    '''Get the status of the current training'''
+
     try:
         ActiveTrainingInfo.print()
         result = ActiveTrainingInfo.toJson()

@@ -1,11 +1,15 @@
-import torch
-import torchvision.transforms as transforms
-
 import matplotlib.pyplot as plt
 import numpy as np
 
+import torch
+import torchvision.transforms as transforms
+
+'''Collection of image transformation related utility functions'''
+
 
 def imshow(image):
+    '''Show image'''
+
     image = image / 2 + 0.5     # unnormalize
     npimg = image.numpy()
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
@@ -13,7 +17,9 @@ def imshow(image):
     plt.show()
 
 
-def splitImage(image, rows, cols) -> None:
+def splitImage(image, rows: int, cols: int) -> None:
+    '''Split the image to specified rows and columns'''
+
     result = []
 
     height, width, channels = image.shape
@@ -35,7 +41,9 @@ def splitImage(image, rows, cols) -> None:
     return result
 
 
-def splitImageToTensors(image, rows, cols) -> None:
+def splitImageToTensors(image, rows: int, cols: int) -> None:
+    '''Split the image and covert to tensors'''
+
     result = []
 
     parts = splitImage(image, rows, cols)
@@ -50,6 +58,8 @@ def splitImageToTensors(image, rows, cols) -> None:
 
 
 def imageToTensor(image) -> None:
+    '''Convert the given image to tensor'''
+
     transformedImage = image
 
     imageTensor = torch.from_numpy(transformedImage)
