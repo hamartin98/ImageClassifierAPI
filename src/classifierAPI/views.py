@@ -7,6 +7,7 @@ from classifier.classificationType import ClassificationTypeUtils
 from classifier.config.classifierConfig import ClassifierConfig
 from classifier.multiModelClassifier import MultiModelClassifier
 from classifier.teacher import Teacher
+from classifier.utils.imageUtils import calculateMeanAndStdForImages
 from .ConfigSerializer import ConfigSerializer
 from .responseThenContinue import ResponseThenContinue
 
@@ -116,6 +117,28 @@ def getTrainingStatus(request):
         response = Response({'trainingStatus': result})
 
         return response
+    except Exception as exception:
+        print(exception)
+        response = Response({'error': f'Error happened: {exception}'})
+        response.status_code = 400
+
+        return response
+
+
+@api_view(['POST'])
+def getDataSetMean(request):
+    '''Get mean value of the given dataset'''
+
+    try:
+        if 'dataPath' not in request.data:
+            raise Exception('dataPath attribute is required')
+            
+        dataPath = request.data['dataPath']
+        
+        meanValues = calculateMeanAndStdForImages(dataPath)
+
+        return Response(meanValues)
+
     except Exception as exception:
         print(exception)
         response = Response({'error': f'Error happened: {exception}'})

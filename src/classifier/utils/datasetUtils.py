@@ -1,13 +1,13 @@
 from sklearn.model_selection import train_test_split
 from typing import Dict
 
-from torch.utils.data import Subset, random_split
 import torch
+from torch.utils.data import Dataset, Subset, random_split
 
 '''Collection of dataset related utility functions'''
 
 
-def splitDatasetTrainTest(dataSet, testSize: float) -> Dict[str, Subset]:
+def splitDatasetTrainTest(dataSet: Dataset, testSize: float) -> Dict[str, Subset]:
     '''Split dataset into training and test sets'''
     dataSets = {}
     arrays = list(range(len(dataSet)))
@@ -20,7 +20,7 @@ def splitDatasetTrainTest(dataSet, testSize: float) -> Dict[str, Subset]:
     return dataSets
 
 
-def splitDataSet(dataSet, trainRatio: float, valRatio: float, testRatio: float) -> Dict[str, Subset]:
+def splitDataSet(dataSet: Dataset, trainRatio: float, valRatio: float, testRatio: float) -> Dict[str, Subset]:
     '''Split dataset into training, test and validation sets with the given ratios'''
     generator = torch.Generator()
     ratios = [trainRatio, testRatio, valRatio]

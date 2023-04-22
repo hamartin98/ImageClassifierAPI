@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import cv2
+from pathlib import Path
+import os
 
 import torch
 import torchvision.transforms as transforms
@@ -73,3 +76,56 @@ def imageToTensor(image) -> None:
     imageTensor = torch.from_numpy(np.expand_dims(imageTensor, axis=0))
 
     return imageTensor
+
+
+def calculateMeanAndStdForImages(path: str):
+    '''Calculate mean and standard deviation values from the given images'''
+    
+    imageFilesDir = Path(path)
+    files = list(imageFilesDir.rglob('*.jpg'))
+
+    print(len(files))
+
+    mean = np.array([0.0, 0.0, 0.0])
+    stdTemp = np.array([0.0, 0.0, 0.0])
+    std = np.array([0.0, 0.0, 0.0])
+
+    fileNum = len(files)
+
+    if fileNum == 0:
+        raise Exception('No files found')
+
+    for idx in range(fileNum):
+        path = os.path.relpath(files[idx])
+        image = cv2.imread(path)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = image.astype(float) / 255.0
+
+        for channel in range(3):
+            mean[channel] += np.mean(image[:, :, channel])
+
+    mean = (mean / fileNum)
+
+    for idx in range(fileNum):
+        path = os.path.relpath(files[idx])
+        image = cv2.imread(path)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = image.astype(float) / 255.0
+
+        divider = (image.shape[0] * image.shape[1])
+        for channel in range(3):
+            data = image[:, :, channel]
+            stdTemp[channel] += ((data - mean[channel]) ** 2).sum() / divider
+
+    std = np.sqrt(stdTemp / fileNum)
+
+    print(std)
+    # [0.36720132 0.38807531 0.35384046]
+    # [0.18385245 0.17220756 0.16941115]
+    
+    print(f'Mean: {mean}\n Std: {std}')
+
+    return {
+        'mean': mean,
+        'std': std
+    }
