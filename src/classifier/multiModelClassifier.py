@@ -3,6 +3,7 @@ import numpy as np
 from typing import Dict
 
 import torch
+from torchvision.transforms import transforms
 
 from .classificationMap import ClassificationMap, BaseClassification
 from .config.config import Config
@@ -57,9 +58,13 @@ class MultiModelClassifier:
 
         mean = tuple(self.baseConfig.getMean())
         std = tuple(self.baseConfig.getStd())
-        
+
+        transformations = transforms.Compose(
+            [transforms.Resize(self.baseConfig.getImageSize()),
+             transforms.Normalize(mean, std)])
+
         self.preparedData = splitImageToTensors(
-            transformedImage, self.rows, self.cols, mean, std)
+            transformedImage, self.rows, self.cols, transformations)
 
     def classifyWithMultiModels(self, image, rows: int, cols: int) -> None:
         '''Classify images with multiple models'''
