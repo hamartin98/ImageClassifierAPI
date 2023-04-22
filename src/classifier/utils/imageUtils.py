@@ -3,7 +3,6 @@ import numpy as np
 import cv2
 from pathlib import Path
 import os
-from typing import Tuple
 
 import torch
 import torchvision.transforms as transforms
@@ -45,7 +44,7 @@ def splitImage(image, rows: int, cols: int) -> None:
     return result
 
 
-def splitImageToTensors(image, rows: int, cols: int, mean: Tuple, std: Tuple) -> None:
+def splitImageToTensors(image, rows: int, cols: int, transformations) -> None:
     '''Split the image and covert to tensors'''
 
     result = []
@@ -54,14 +53,17 @@ def splitImageToTensors(image, rows: int, cols: int, mean: Tuple, std: Tuple) ->
     for row in range(0, rows):
         resultRow = []
         for col in range(0, cols):
-            imageTensor = imageToTensor(parts[row][col], mean, std)
+            imageTensor = imageToTensor(parts[row][col])
+            imageTensor = transformations(imageTensor)
+
             resultRow.append(imageTensor)
+
         result.append(resultRow)
 
     return result
 
 
-def imageToTensor(image, mean: Tuple[float], std: Tuple[float]) -> None:
+def imageToTensor(image) -> None:
     '''Convert the given image to tensor'''
 
     transformedImage = image
@@ -71,8 +73,7 @@ def imageToTensor(image, mean: Tuple[float], std: Tuple[float]) -> None:
     imageTensor = imageTensor.numpy()
     imageTensor = np.transpose(imageTensor, (1, 2, 0))
 
-    transform = transforms.Compose(
-        [transforms.ToTensor(), transforms.Normalize(mean, std)])
+    transform = transforms.Compose([transforms.ToTensor()])
     imageTensor = transform(imageTensor)
     imageTensor = torch.from_numpy(np.expand_dims(imageTensor, axis=0))
 

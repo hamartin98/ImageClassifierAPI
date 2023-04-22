@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
 
 from .config import Config
 from ..classificationType import ClassificationType, ClassificationTypeUtils
@@ -180,7 +180,7 @@ class ClassifierConfig:
 
         return self._config['imageHeight']
 
-    def getImageSize(self) -> tuple:
+    def getImageSize(self) -> Tuple:
         '''Get image size as a tuple in (width, height) format'''
 
         return (self.getImageWidth(), self.getImageHeight())

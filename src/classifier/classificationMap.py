@@ -1,5 +1,5 @@
 import os
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from .classificationType import ClassificationType
 from .config.classifierConfig import ClassifierConfig
@@ -52,7 +52,7 @@ class BaseClassification:
         labelList = list(str(key) for key in self.classes.keys())
         return labelList
 
-    def getClassLabelsTuple(self) -> tuple:
+    def getClassLabelsTuple(self) -> Tuple:
         '''Return the list of labels as a tuple'''
 
         return tuple(self.getClassLabels())
