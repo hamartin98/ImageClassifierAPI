@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 from pathlib import Path
 import os
+from typing import Tuple
 
 import torch
 import torchvision.transforms as transforms
@@ -44,7 +45,7 @@ def splitImage(image, rows: int, cols: int) -> None:
     return result
 
 
-def splitImageToTensors(image, rows: int, cols: int) -> None:
+def splitImageToTensors(image, rows: int, cols: int, mean: Tuple, std: Tuple) -> None:
     '''Split the image and covert to tensors'''
 
     result = []
@@ -53,14 +54,14 @@ def splitImageToTensors(image, rows: int, cols: int) -> None:
     for row in range(0, rows):
         resultRow = []
         for col in range(0, cols):
-            imageTensor = imageToTensor(parts[row][col])
+            imageTensor = imageToTensor(parts[row][col], mean, std)
             resultRow.append(imageTensor)
         result.append(resultRow)
 
     return result
 
 
-def imageToTensor(image) -> None:
+def imageToTensor(image, mean: Tuple[float], std: Tuple[float]) -> None:
     '''Convert the given image to tensor'''
 
     transformedImage = image
@@ -71,7 +72,7 @@ def imageToTensor(image) -> None:
     imageTensor = np.transpose(imageTensor, (1, 2, 0))
 
     transform = transforms.Compose(
-        [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        [transforms.ToTensor(), transforms.Normalize(mean, std)])
     imageTensor = transform(imageTensor)
     imageTensor = torch.from_numpy(np.expand_dims(imageTensor, axis=0))
 
@@ -80,11 +81,9 @@ def imageToTensor(image) -> None:
 
 def calculateMeanAndStdForImages(path: str):
     '''Calculate mean and standard deviation values from the given images'''
-    
+
     imageFilesDir = Path(path)
     files = list(imageFilesDir.rglob('*.jpg'))
-
-    print(len(files))
 
     mean = np.array([0.0, 0.0, 0.0])
     stdTemp = np.array([0.0, 0.0, 0.0])
@@ -119,10 +118,6 @@ def calculateMeanAndStdForImages(path: str):
 
     std = np.sqrt(stdTemp / fileNum)
 
-    print(std)
-    # [0.36720132 0.38807531 0.35384046]
-    # [0.18385245 0.17220756 0.16941115]
-    
     print(f'Mean: {mean}\n Std: {std}')
 
     return {

@@ -39,8 +39,11 @@ class Teacher:
         self.optimizer = optim.SGD(
             self.network.parameters(), lr=self.config.getLearningRate(), momentum=self.config.getMomentum())
 
+        meanValues = tuple(self.config.getMean())
+        stdValues = tuple(self.config.getStd())
+
         self.transform = transforms.Compose(
-            [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+            [transforms.ToTensor(), transforms.Normalize(meanValues, stdValues)])
 
         self.dataSet = CustomDataset(path=self.config.getDataPath(), classes=self.classes,
                                      imgDim=self.config.getImageSize(), transform=self.transform)

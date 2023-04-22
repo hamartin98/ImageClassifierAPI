@@ -55,8 +55,11 @@ class MultiModelClassifier:
             bytearray(self.originalData.read()), dtype="uint8")
         transformedImage = cv2.imdecode(transformedImage, cv2.IMREAD_COLOR)
 
+        mean = tuple(self.baseConfig.getMean())
+        std = tuple(self.baseConfig.getStd())
+        
         self.preparedData = splitImageToTensors(
-            transformedImage, self.rows, self.cols)
+            transformedImage, self.rows, self.cols, mean, std)
 
     def classifyWithMultiModels(self, image, rows: int, cols: int) -> None:
         '''Classify images with multiple models'''

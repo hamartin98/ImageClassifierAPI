@@ -40,6 +40,10 @@ class ConfigSerializer(serializers.Serializer):
         required=True, min_value=1)
     type = serializers.CharField(
         required=True, validators=[typeValidator])
+    mean = serializers.ListField(
+        required=False, child=serializers.FloatField(min_value=0.0, max_value=1.0), min_length=3, max_length=3)
+    std = serializers.ListField(
+        required=False, child=serializers.FloatField(min_value=0.0, max_value=1.0), min_length=3, max_length=3)
 
     def validate(self, data):
         '''Add multi field custom validation'''

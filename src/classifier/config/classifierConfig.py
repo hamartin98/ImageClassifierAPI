@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from .config import Config
 from ..classificationType import ClassificationType, ClassificationTypeUtils
@@ -29,7 +29,9 @@ class ClassifierConfig:
             'epochs': 50,
             'momentum': 0.9,
             'batchSize': 10,
-            'type': ClassificationType.NONE
+            'type': ClassificationType.NONE,
+            'mean': [0.36720132, 0.38807531, 0.35384046],
+            'std': [0.18385245, 0.17220756, 0.16941115]
         }
 
         if fileName:
@@ -96,6 +98,12 @@ class ClassifierConfig:
         if 'type' in configData:
             self.setType(configData['type'])
 
+        if 'mean' in configData:
+            self.setMean(configData['mean'])
+
+        if 'std' in configData:
+            self.setStd(configData['std'])
+
         self.originalJsonData = configData
 
     def overrideFromEnv(self) -> None:
@@ -115,6 +123,7 @@ class ClassifierConfig:
         self.setEpochs(os.environ.get('EPOCHS'))
         self.setMomentum(os.environ.get('MOMENTUM'))
         self.setBatchSize(os.environ.get('BATCH_SIZE'))
+        # TODO: Set mean and std values
 
     def print(self) -> None:
         '''Print the configuration as a formatted json'''
@@ -325,6 +334,32 @@ class ClassifierConfig:
         '''Get current classification type'''
 
         return self._config['type']
+
+    def setMean(self, newValue: List[float]) -> None:
+        '''Set mean values'''
+
+        if isinstance(newValue, list) and len(newValue) == 3:
+            self._config['mean'] = newValue
+        else:
+            raise ValueError('Invalid mean value in configuration')
+
+    def getMean(self) -> List[int]:
+        '''Get mean values'''
+
+        return self._config['mean']
+
+    def setStd(self, newValue: List[float]) -> None:
+        '''Set std values'''
+
+        if isinstance(newValue, list) and len(newValue) == 3:
+            self._config['std'] = newValue
+        else:
+            raise ValueError('Invalid std value in configuration')
+
+    def getStd(self) -> List[int]:
+        '''Get std values'''
+
+        return self._config['std']
 
     def getAsJson(self) -> Dict[str, Any]:
         '''Return configuration as a json dictionary'''
