@@ -4,7 +4,7 @@ from torch.utils.data import Subset, random_split
 import torch
 
 
-def splitDatasetOld(dataSet, testSize):
+def splitDatasetTrainTest(dataSet, testSize: float) -> Dict[str, Subset]:
     '''Split dataset into training and test sets'''
     dataSets = {}
     arrays = list(range(len(dataSet)))
@@ -17,7 +17,8 @@ def splitDatasetOld(dataSet, testSize):
     return dataSets
 
 
-def splitDataSet(dataSet, trainRatio: float, valRatio: float, testRatio: float) -> Dict[str, Any]:
+def splitDataSet(dataSet, trainRatio: float, valRatio: float, testRatio: float) -> Dict[str, Subset]:
+    '''Split dataset into training, test and validation sets with the given ratios'''
     generator = torch.Generator()
     ratios = [trainRatio, testRatio, valRatio]
     trainIdx, testIdx, valIdx = random_split(dataSet, ratios, generator)
