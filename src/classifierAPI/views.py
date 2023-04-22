@@ -1,9 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from classifier.activeTrainingInfo import ActiveTrainingInfo
+from classifier.activeTrainingInfo import ActiveTrainingInfo, TrainingStatus
 from classifier.classificationMap import BaseClassification, ClassificationMap
-from classifier.classificationType import ClassificationTypeUtils
+from classifier.classificationType import ClassificationType, ClassificationTypeUtils
 from classifier.config.classifierConfig import ClassifierConfig
 from classifier.multiModelClassifier import MultiModelClassifier
 from classifier.teacher import Teacher
@@ -132,9 +132,9 @@ def getDataSetMean(request):
     try:
         if 'dataPath' not in request.data:
             raise Exception('dataPath attribute is required')
-            
+
         dataPath = request.data['dataPath']
-        
+
         meanValues = calculateMeanAndStdForImages(dataPath)
 
         return Response(meanValues)
@@ -145,3 +145,33 @@ def getDataSetMean(request):
         response.status_code = 400
 
         return response
+
+
+@api_view(['GET'])
+def getClassificationTypes(request):
+    try:
+        result = {}
+
+        for data in ClassificationType:
+            result[data.name] = data.value
+
+        return Response(result)
+    except Exception as exception:
+        print(exception)
+        response = Response({'error': f'Error happened: {exception}'})
+        response.status_code = 500
+
+
+@api_view(['GET'])
+def getTrainingStatusValues(request):
+    try:
+        result = {}
+
+        for data in TrainingStatus:
+            result[data.name] = data.value
+
+        return Response(result)
+    except Exception as exception:
+        print(exception)
+        response = Response({'error': f'Error happened: {exception}'})
+        response.status_code = 500

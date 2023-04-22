@@ -36,5 +36,7 @@ urlpatterns = [
     path('api/trainModel', views.singleClassTeach),
     path('api/trainingStatus', views.getTrainingStatus),
     path('api/dataSetMean', views.getDataSetMean),
+    path('api/values/classificationTypes', views.getClassificationTypes),
+    path('api/values/trainingStatus', views.getTrainingStatusValues),
     path('', schema_view.with_ui('swagger', cache_timeout=0))
 ]
