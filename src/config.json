@@ -16,6 +16,8 @@
   "momentum": 0.9,
   "batchSize": 15,
   "type": "None",
+  "mean": [0.36720132, 0.38807531, 0.35384046],
+  "std": [0.18385245, 0.17220756, 0.16941115],
   "building": {
     "type": "building",
     "dataPath": "base_data/1000_b - SG",
