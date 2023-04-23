@@ -31,7 +31,8 @@ class ClassifierConfig:
             'batchSize': 10,
             'type': ClassificationType.NONE,
             'mean': [0.36720132, 0.38807531, 0.35384046],
-            'std': [0.18385245, 0.17220756, 0.16941115]
+            'std': [0.18385245, 0.17220756, 0.16941115],
+            'augmentDataSet': True
         }
 
         if fileName:
@@ -104,6 +105,9 @@ class ClassifierConfig:
         if 'std' in configData:
             self.setStd(configData['std'])
 
+        if 'augmentDataSet' in configData:
+            self.setAugmentDataSet(configData['augmentDataSet'])
+
         self.originalJsonData = configData
 
     def overrideFromEnv(self) -> None:
@@ -123,6 +127,7 @@ class ClassifierConfig:
         self.setEpochs(os.environ.get('EPOCHS'))
         self.setMomentum(os.environ.get('MOMENTUM'))
         self.setBatchSize(os.environ.get('BATCH_SIZE'))
+        self.setAugmentDataSet(os.environ.get('AUGMENT_DATASET'))
         # TODO: Set mean and std values
 
     def print(self) -> None:
@@ -360,6 +365,17 @@ class ClassifierConfig:
         '''Get std values'''
 
         return self._config['std']
+
+    def setAugmentDataSet(self, newValue: bool) -> None:
+        '''Set whether to augment dataset'''
+
+        if Config.isSet(newValue):
+            self._config['augmentDataSet'] = newValue
+
+    def getAugmentDataSet(self) -> bool:
+        '''Return whether to augment dataset'''
+
+        return self._config['augmentDataSet']
 
     def getAsJson(self) -> Dict[str, Any]:
         '''Return configuration as a json dictionary'''

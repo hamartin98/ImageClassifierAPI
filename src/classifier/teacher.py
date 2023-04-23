@@ -1,5 +1,5 @@
 from timeit import default_timer as timer
-from typing import List
+from typing import Any, List
 
 import torch
 import torch.nn as nn
@@ -13,6 +13,7 @@ from .classificationMap import (
     BaseClassification)
 from .datasets.customDataset import CustomDataset
 from .models.baseNetwork import BaseNetwork
+from .transformations import Transformations
 from .utils.datasetUtils import splitDataSet
 from .utils.timeUtils import TimeUtils
 
@@ -42,11 +43,12 @@ class Teacher:
         meanValues = tuple(self.config.getMean())
         stdValues = tuple(self.config.getStd())
 
-        self.transform = transforms.Compose(
-            [transforms.ToTensor(), transforms.Normalize(meanValues, stdValues)])
+        normalizerTransform = transforms.Normalize(meanValues, stdValues)
+
+        baseTransforms = [transforms.ToTensor(), normalizerTransform]
 
         self.dataSet = CustomDataset(path=self.config.getDataPath(), classes=self.classes,
-                                     imgDim=self.config.getImageSize(), transform=self.transform)
+                                     imgDim=self.config.getImageSize(), transformList=baseTransforms)
 
         trainRatio = config.getTrainRatio()
         testRatio = config.getTestRatio()
@@ -55,6 +57,13 @@ class Teacher:
             self.dataSet, trainRatio, valRatio, testRatio)
         self.dataLoaders = {x: DataLoader(
             self.dataSets[x], self.config.getBatchSize(), shuffle=True, num_workers=self.config.getDataLoaderWorkers()) for x in ['train', 'val', 'test']}
+
+        if self.config.getAugmentDataSet():
+            transformations = Transformations()
+            augmenterTransforms: List[Any] = transformations.getBasicAugmenterTransforms()
+            augmenterTransforms.append(normalizerTransform)
+            
+            self.dataLoaders['train'].dataset.dataset.overrideTransforms(augmenterTransforms)
 
         self.classification.loadModel()
 

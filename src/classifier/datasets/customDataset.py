@@ -2,18 +2,21 @@ import cv2
 import glob
 import numpy as np
 import os
+from typing import Any, List
 
 import torch
 from torch.utils.data import Dataset
+from torchvision.transforms import transforms
 
 
 class CustomDataset(Dataset):
     '''Custom dataset to handle custom image data'''
 
-    def __init__(self, path: str, classes: tuple, imgDim=(62, 62), transform=None):
+    def __init__(self, path: str, classes: tuple, imgDim=(62, 62), transformList=[]):
         '''Default initalization'''
 
-        self.transform = transform
+        self.transformList: List[Any] = transformList
+        self.composedTransforms = transforms.Compose(transformList)
         self.imagesPath = path
         fileList = glob.glob(os.path.join(self.imagesPath, "*"))
 
@@ -49,8 +52,8 @@ class CustomDataset(Dataset):
         classId = self.classMap[className]
         classId = torch.tensor(classId)
 
-        if self.transform:
-            imgTensor = self.transform(imgTensor)
+        if self.composedTransforms:
+            imgTensor = self.composedTransforms(imgTensor)
 
         return imgTensor, classId
 
@@ -62,3 +65,18 @@ class CustomDataset(Dataset):
             classMap[cls] = idx
 
         self.classMap = classMap
+
+    def addTransforms(self, transformations: List[Any]) -> None:
+        '''Extend list of transformations of the dataset'''
+
+        if self.transformList is None:
+            self.transformList = []
+
+        self.transformList.extend(transformations)
+        self.composedTransforms = transforms.Compose(self.transformList)
+
+    def overrideTransforms(self, transformations: List[Any]) -> None:
+        '''Override the list of transformations of the dataset'''
+
+        self.transformList = transformations
+        self.composedTransforms = transforms.Compose(self.transformList)
