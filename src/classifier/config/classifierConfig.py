@@ -38,7 +38,6 @@ class ClassifierConfig:
         if fileName:
             self.setFromFile(fileName)
         self.overrideFromEnv()
-        # self.print()
 
     def setFromFile(self, fileName: str) -> None:
         '''Set config values from the given file'''

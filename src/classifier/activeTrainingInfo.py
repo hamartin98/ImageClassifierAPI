@@ -1,6 +1,8 @@
 from enum import IntEnum
 import datetime
 import json
+import os
+import shutil
 from typing import List, Dict, Any
 
 from .config.classifierConfig import ClassifierConfig
@@ -378,15 +380,28 @@ class ActiveTrainingInfo:
         with open(savePath, 'w') as outFile:
             jsonData = ActiveTrainingInfo.toJson()
             json.dump(jsonData, outFile, indent=4, sort_keys=False)
+            
+    @staticmethod
+    def setupSavePath() -> None:
+        '''Setup save location'''
+        
+        basePath = Config.getLearningInfoPath()
+        name = ActiveTrainingInfo.assembleName()
+        savePath = f'{basePath}/{name}'
+        
+        if os.path.exists(savePath):
+            shutil.rmtree(savePath)
+        os.mkdir(savePath)
+        
+        ActiveTrainingInfo.setSavePath(savePath)
 
     @staticmethod
     def saveResultData() -> None:
         '''Save training result'''
-
-        basePath = Config.getLearningInfoPath()
-        name = ActiveTrainingInfo.getName()
-        ActiveTrainingInfo.saveLossAndAccuracyDiagram(basePath, name)
-        ActiveTrainingInfo.saveResultJson(basePath, name)
+        
+        savePath = ActiveTrainingInfo.getSavePath()
+        ActiveTrainingInfo.saveLossAndAccuracyDiagram(savePath, 'lossAndAccuracy')
+        ActiveTrainingInfo.saveResultJson(savePath, 'result')
 
     @staticmethod
     def createEpochInfo() -> None:
@@ -438,6 +453,25 @@ class ActiveTrainingInfo:
         }
 
         return result
+    
+    @staticmethod
+    def assembleName() -> str:
+        '''Create name from the config'''
+
+        todayStr = TimeUtils.getTodayStr()
+        name = todayStr
+        
+        config = ActiveTrainingInfo.getConfig()
+        
+        if config:
+            typeStr = str(config.getType())
+            epochs = config.getEpochs()
+            batchSize = config.getBatchSize()
+            learningRate = config.getLearningRate()
+            
+            name = f'{todayStr}_{typeStr}_{epochs}_{batchSize}_{learningRate}'
+
+        return name
 
     @staticmethod
     def print() -> None:

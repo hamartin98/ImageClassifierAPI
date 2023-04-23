@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 
 class TimeUtils:
@@ -46,3 +46,10 @@ class TimeUtils:
             return str(timedelta(seconds=rounded))
 
         return dateTime.strftime("%Y-%m-%dT%H:%M:%S")
+
+    @staticmethod
+    def getTodayStr() -> str:
+        '''Return todays date as a string'''
+
+        today = date.today()
+        return str(today)

@@ -99,31 +99,26 @@ class BaseClassification:
 
         return self.network
 
-    def classifyImageWithModel(image, config: ClassifierConfig) -> None:
-        '''Classify the given image with the current classification'''
-
-        # TODO: implement
-        pass
-
-    def classifyImagesWithModel(images, config: ClassifierConfig) -> None:
-        '''Classify multiple images with the current classification'''
-
-        # TODO: implement
-        pass
-
-    # TODO: Fix path issues
-    def saveModel(self) -> None:
+    def saveModel(self, path: str, modelName = 'model') -> None:
         '''Save current classification's model'''
 
         if self.configuration.getSaveModel():
             if self.network:
-                basePath = Config.getModelsPath()
+                #basePath = Config.getModelsPath()
                 #modelName = self.network.getId() + '_' + self.name + '_2.pth'
-                modelName = self.configuration.getModelPath()
-                basePath = 'data\models'
+                #modelName = self.configuration.getModelPath()
+                #basePath = 'data\models'
                 #savePath = os.path.normpath(os.path.abspath(os.path.join(basePath, modelName)))
-                savePath = os.path.join(basePath, modelName)
+                basePath = path
+                savePath = f'{basePath}/{modelName}.pth'
+                #savePath = os.path.join(basePath, modelName)
                 savePath = os.path.normpath(savePath)
+                savePath = os.path.abspath(savePath)
+                print(savePath)
+                
+                if os.path.exists(basePath):
+                    print('EXISTS')
+                
                 self.network.save(savePath)
             else:
                 print('Error saving model, network not found')
@@ -132,6 +127,7 @@ class BaseClassification:
         '''Load current classification's model'''
 
         print('TODO: implement model load')
+        #self.network.load()
 
 
 class BuildingClassification(BaseClassification):

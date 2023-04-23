@@ -79,12 +79,11 @@ class Teacher:
         ActiveTrainingInfo.setConfig(self.config)
         ActiveTrainingInfo.setName('Training')
         ActiveTrainingInfo.setCurrentEpochs(0)
+        ActiveTrainingInfo.setupSavePath()
         ActiveTrainingInfo.setTotalEpochs(self.config.getEpochs())
         ActiveTrainingInfo.setStartTime(TimeUtils.getCurrentTime())
         ActiveTrainingInfo.setEndTime(0)
         ActiveTrainingInfo.setStatus(TrainingStatus.STARTED)
-
-        self.config.print()
 
     def setupDevice(self) -> None:
         '''Setup CPU or GPU device if available'''
@@ -155,7 +154,7 @@ class Teacher:
             print('Finished Training')
             print(f'Training duration: {trainingTimeStr}')
 
-            self.classification.saveModel()
+            self.classification.saveModel(ActiveTrainingInfo.getSavePath())
 
             self.test()
 

@@ -50,6 +50,7 @@ class BaseNetwork(nn.Module):
         '''Save the current model to the given path'''
 
         try:
+            print(path)
             torch.save(self.state_dict(), path)
             print('Model saved')
         except RuntimeError as error:
