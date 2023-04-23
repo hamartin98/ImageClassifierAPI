@@ -396,11 +396,26 @@ class ActiveTrainingInfo:
         ActiveTrainingInfo.setSavePath(savePath)
 
     @staticmethod
+    def setupSavePath() -> None:
+        '''Setup save location'''
+
+        basePath = Config.getLearningInfoPath()
+        name = ActiveTrainingInfo.assembleName()
+        savePath = f'{basePath}/{name}'
+
+        if os.path.exists(savePath):
+            shutil.rmtree(savePath)
+        os.mkdir(savePath)
+
+        ActiveTrainingInfo.setSavePath(savePath)
+
+    @staticmethod
     def saveResultData() -> None:
         '''Save training result'''
-        
+
         savePath = ActiveTrainingInfo.getSavePath()
-        ActiveTrainingInfo.saveLossAndAccuracyDiagram(savePath, 'lossAndAccuracy')
+        ActiveTrainingInfo.saveLossAndAccuracyDiagram(
+            savePath, 'lossAndAccuracy')
         ActiveTrainingInfo.saveResultJson(savePath, 'result')
 
     @staticmethod
@@ -469,6 +484,25 @@ class ActiveTrainingInfo:
             batchSize = config.getBatchSize()
             learningRate = config.getLearningRate()
             
+            name = f'{todayStr}_{typeStr}_{epochs}_{batchSize}_{learningRate}'
+
+        return name
+
+    @staticmethod
+    def assembleName() -> str:
+        '''Create name from the config'''
+
+        todayStr = TimeUtils.getTodayStr()
+        name = todayStr
+
+        config = ActiveTrainingInfo.getConfig()
+
+        if config:
+            typeStr = str(config.getType())
+            epochs = config.getEpochs()
+            batchSize = config.getBatchSize()
+            learningRate = config.getLearningRate()
+
             name = f'{todayStr}_{typeStr}_{epochs}_{batchSize}_{learningRate}'
 
         return name

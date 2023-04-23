@@ -60,12 +60,14 @@ class Teacher:
 
         if self.config.getAugmentDataSet():
             transformations = Transformations()
-            augmenterTransforms: List[Any] = transformations.getBasicAugmenterTransforms()
+            augmenterTransforms = transformations.getBasicAugmenterTransforms()
             augmenterTransforms.append(normalizerTransform)
-            
-            self.dataLoaders['train'].dataset.dataset.overrideTransforms(augmenterTransforms)
 
-        self.classification.loadModel()
+            self.dataLoaders['train'].dataset.dataset.overrideTransforms(
+                augmenterTransforms)
+
+        modelPath = self.config.getModelPath()
+        self.classification.loadModel(modelPath)
 
         # send network to device
         self.network.to(self.device)

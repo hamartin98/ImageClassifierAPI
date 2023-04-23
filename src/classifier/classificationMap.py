@@ -104,30 +104,20 @@ class BaseClassification:
 
         if self.configuration.getSaveModel():
             if self.network:
-                #basePath = Config.getModelsPath()
-                #modelName = self.network.getId() + '_' + self.name + '_2.pth'
-                #modelName = self.configuration.getModelPath()
-                #basePath = 'data\models'
-                #savePath = os.path.normpath(os.path.abspath(os.path.join(basePath, modelName)))
-                basePath = path
-                savePath = f'{basePath}/{modelName}.pth'
-                #savePath = os.path.join(basePath, modelName)
+                savePath = f'{path}/{modelName}.pth'
                 savePath = os.path.normpath(savePath)
-                savePath = os.path.abspath(savePath)
-                print(savePath)
-                
-                if os.path.exists(basePath):
-                    print('EXISTS')
                 
                 self.network.save(savePath)
             else:
                 print('Error saving model, network not found')
 
-    def loadModel(self) -> None:
+    def loadModel(self, path: str) -> None:
         '''Load current classification's model'''
 
-        print('TODO: implement model load')
-        #self.network.load()
+        if self.configuration.getLoadModel():
+            if self.network:
+                self.network.load(path)
+                print('Model loaded')
 
 
 class BuildingClassification(BaseClassification):
