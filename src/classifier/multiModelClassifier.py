@@ -60,7 +60,7 @@ class MultiModelClassifier:
         std = tuple(self.baseConfig.getStd())
 
         transformations = transforms.Compose(
-            [transforms.Resize(self.baseConfig.getImageSize()),
+            [transforms.Resize(self.baseConfig.getImageSize(), antialias=False),
              transforms.Normalize(mean, std)])
 
         self.preparedData = splitImageToTensors(
