@@ -17,7 +17,7 @@
 						{
 							"key": "image",
 							"type": "file",
-							"src": "/D:/Egyetem/_MSc/4. félév/Diplomadolgozat/Program/01.bmp.jpeg"
+							"src": "/D:/Egyetem/_MSc/4. félév/Diplomadolgozat/Program/imageSplitter/01.bmp.jpeg"
 						},
 						{
 							"key": "rows",
@@ -63,6 +63,130 @@
 					"path": [
 						"api",
 						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Train model - veg",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"basePath\": \"data\",\r\n  \"dataPath\": \"base_data/1000_v - SG\",\r\n  \"modelPath\": \"three_class_vegetation_4.pth\",\r\n  \"imageWidth\": 62,\r\n  \"imageHeight\": 62,\r\n  \"trainRatio\": 0.6,\r\n  \"valRatio\": 0.2,\r\n  \"testRatio\": 0.2,\r\n  \"saveModel\": true,\r\n  \"loadModel\": false,\r\n  \"dataLoaderWorkers\": 2,\r\n  \"learningRate\": 0.001,\r\n  \"epochs\": 1,\r\n  \"momentum\": 0.9,\r\n  \"batchSize\": 32,\r\n  \"type\": \"vegetation\",\r\n  \"mean\": [0.36720132, 0.38807531, 0.35384046],\r\n  \"std\": [0.18385245, 0.17220756, 0.16941115],\r\n  \"augmentDataSet\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/api/trainModel",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"trainModel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get training status",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/api/trainingStatus",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"trainingStatus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get training status Values",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/api/values/trainingStatus",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"values",
+						"trainingStatus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get classification types",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/api/values/classificationTypes",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"values",
+						"classificationTypes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get dataset mean values",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"dataPath\": \"D:/Egyetem/_MSc/ImageClassifierAPI/data/images/base_data/1000_b - SG\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/api/dataSetMean",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"dataSetMean"
 					]
 				}
 			},
