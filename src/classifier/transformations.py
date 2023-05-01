@@ -23,9 +23,9 @@ class Transformations():
         
         self.basicAugmenterTransforms = []
         
-        self.initBasicAugmenterTransform()
+        self.initBasicAugmenterTransforms()
 
-    def initBasicAugmenterTransform(self) -> None:
+    def initBasicAugmenterTransforms(self) -> None:
         '''Setup basic augmenter transformation'''
         
         toTensor = T.ToTensor()

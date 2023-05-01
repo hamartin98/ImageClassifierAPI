@@ -50,7 +50,7 @@ def classifyImage(request):
 
         return Response(response)
     except KeyError as exception:
-        response = Response({'error': f'{exception}'})
+        response = Response({'error': f'Key not found: {exception}'})
         response.status_code = 400
 
         return response
@@ -126,7 +126,7 @@ def getTrainingStatus(request):
 
 
 @api_view(['POST'])
-def getDataSetMean(request):
+def getDataSetMeanAndStd(request):
     '''Get mean value of the given dataset'''
 
     try:

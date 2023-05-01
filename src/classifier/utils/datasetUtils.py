@@ -28,6 +28,7 @@ def splitDataSet(dataSet: Dataset, trainRatio: float, valRatio: float, testRatio
 
     dataSets = {}
 
+    # set corresponding data in the dictionary
     dataSets['train'] = Subset(dataSet, trainIdx.indices)
     dataSets['test'] = Subset(dataSet, testIdx.indices)
     dataSets['val'] = Subset(dataSet, valIdx.indices)

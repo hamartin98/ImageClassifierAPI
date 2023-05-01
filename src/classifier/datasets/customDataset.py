@@ -18,6 +18,8 @@ class CustomDataset(Dataset):
         self.transformList: List[Any] = transformList
         self.composedTransforms = transforms.Compose(transformList)
         self.imagesPath = path
+        self.targetDataSetSize = 0.0
+
         fileList = glob.glob(os.path.join(self.imagesPath, "*"))
 
         self.data = []
@@ -25,9 +27,13 @@ class CustomDataset(Dataset):
         for classPath in fileList:
             classPath = os.path.relpath(classPath)
             className = os.path.normpath(classPath).split(os.path.sep)[-1]
-            p = glob.glob(classPath + "/*.jpg")
-            for imagePath in p:
+            paths = glob.glob(classPath + "/*.jpg")
+            for imagePath in paths:
                 self.data.append([os.path.join(imagePath), className])
+
+            currentClassSize = len(paths)
+            if currentClassSize > self.targetDataSetSize:
+                self.targetDataSetSize = currentClassSize
 
         self.createClassMap(classes)
         self.imgDim = imgDim

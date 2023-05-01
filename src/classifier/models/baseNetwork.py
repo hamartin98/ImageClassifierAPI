@@ -37,7 +37,7 @@ class BaseNetwork(nn.Module):
         except RuntimeError as error:
             print(f'Error loading model {error}')
 
-    def loadToDevice(self, path: str, device) -> None:
+    def loadToDevice(self, path: str, device: str) -> None:
         '''Load model state to the given device'''
 
         try:

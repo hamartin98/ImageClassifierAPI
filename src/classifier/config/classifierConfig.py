@@ -32,7 +32,8 @@ class ClassifierConfig:
             'type': ClassificationType.NONE,
             'mean': [0.36720132, 0.38807531, 0.35384046],
             'std': [0.18385245, 0.17220756, 0.16941115],
-            'augmentDataSet': True
+            'augmentDataSet': True,
+            'balanceDataSet': True
         }
 
         if fileName:
@@ -107,6 +108,9 @@ class ClassifierConfig:
         if 'augmentDataSet' in configData:
             self.setAugmentDataSet(configData['augmentDataSet'])
 
+        if 'balanceDataSet' in configData:
+            self.setBalanceDataSet(configData['balanceDataSet'])
+
         self.originalJsonData = configData
 
     def overrideFromEnv(self) -> None:
@@ -127,6 +131,7 @@ class ClassifierConfig:
         self.setMomentum(os.environ.get('MOMENTUM'))
         self.setBatchSize(os.environ.get('BATCH_SIZE'))
         self.setAugmentDataSet(os.environ.get('AUGMENT_DATASET'))
+        self.setBalanceDataSet(os.environ.get('BALANCE_DATASET'))
         # TODO: Set mean and std values
 
     def print(self) -> None:
@@ -375,6 +380,17 @@ class ClassifierConfig:
         '''Return whether to augment dataset'''
 
         return self._config['augmentDataSet']
+
+    def setBalanceDataSet(self, newValue: bool) -> None:
+        '''Set whether to balance class sizes in the dataset'''
+
+        if Config.isSet(newValue):
+            self._config['balanceDataSet'] = newValue
+
+    def getBalanceDataSet(self) -> bool:
+        '''Get whether to balance class sizes in the dataset'''
+
+        return self._config['balanceDataSet']
 
     def getAsJson(self) -> Dict[str, Any]:
         '''Return configuration as a json dictionary'''
