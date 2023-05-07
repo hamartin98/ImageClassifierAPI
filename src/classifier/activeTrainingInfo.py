@@ -33,6 +33,7 @@ class ActiveTrainingInfo:
     '''Follow the status of the currently running training'''
 
     name: str = ''
+    modelName: str = ''
     savePath: str = ''
     saveResult: bool = False
     status: TrainingStatus = TrainingStatus.NONE
@@ -341,6 +342,18 @@ class ActiveTrainingInfo:
         ActiveTrainingInfo.name = name
 
     @staticmethod
+    def getModelName() -> str:
+        '''Get the name of the currently used model'''
+
+        return ActiveTrainingInfo.modelName
+
+    @staticmethod
+    def setModelName(modelName: str) -> None:
+        '''Set the model name used in the current training session'''
+
+        ActiveTrainingInfo.modelName = modelName
+
+    @staticmethod
     def getSavePath() -> str:
         '''Get path to save the current training information'''
 
@@ -461,6 +474,7 @@ class ActiveTrainingInfo:
 
         todayStr = TimeUtils.getTodayStr()
         name = todayStr
+        modelName = ActiveTrainingInfo.getModelName()
 
         config = ActiveTrainingInfo.getConfig()
 
@@ -470,7 +484,7 @@ class ActiveTrainingInfo:
             batchSize = config.getBatchSize()
             learningRate = config.getLearningRate()
 
-            name = f'{todayStr}_{typeStr}_{epochs}_{batchSize}_{learningRate}'
+            name = f'{todayStr}_{modelName}_{typeStr}_{epochs}_{batchSize}_{learningRate}'
 
         return name
 

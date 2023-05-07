@@ -1,43 +1,30 @@
 import torch
 import torch.nn as nn
+from torchvision import models
 
 
-class BaseNetwork(nn.Module):
-    '''Basic network class to build new models on top of it'''
+class ResNetNetwork:
+    '''Wrapper class for resnet to use like custom model'''
 
-    def __init__(self, id: str):
-        '''Basic initialization'''
+    def __init__(self, id: str = 'resnet50'):
+        self.id = id
+        self.model = models.resnet50(weights=None)
 
-        super().__init__()
+    def getId(self) -> str:
+        '''Get network's id'''
 
-        self.id: str = id
-        self.layers: nn.ModuleList = None
+        return self.id
 
     def getModel(self) -> nn.Module:
         '''Get network's model'''
 
-        return self
-
-    def forward(self, x):
-        '''Override forward function'''
-
-        result = x
-
-        for layer in self.layers:
-            result = layer(result)
-
-        return result
-
-    def getId(self) -> str:
-        '''Get the id of the current network'''
-
-        return self.id
+        return self.model
 
     def load(self, path: str) -> None:
         '''Load model state from the given file'''
 
         try:
-            self.load_state_dict(torch.load(path))
+            self.model.load_state_dict(torch.load(path))
             print('Model loaded')
         except RuntimeError as error:
             print(f'Error loading model {error}')
@@ -46,7 +33,7 @@ class BaseNetwork(nn.Module):
         '''Load model state to the given device'''
 
         try:
-            self.load_state_dict(torch.load(path, map_location=device))
+            self.model.load_state_dict(torch.load(path, map_location=device))
             print('Model loaded')
         except RuntimeError as error:
             print(f'Error loading model: {error}')
@@ -56,7 +43,7 @@ class BaseNetwork(nn.Module):
 
         try:
             print(path)
-            torch.save(self.state_dict(), path)
+            torch.save(self.model.state_dict(), path)
             print('Model saved')
         except RuntimeError as error:
             print(f'Error saving model: {error}')

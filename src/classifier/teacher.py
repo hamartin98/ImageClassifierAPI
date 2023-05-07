@@ -34,11 +34,17 @@ class Teacher:
 
         self.setupDevice()
 
-        self.network: BaseNetwork = self.classification.getNetwork()
+        self.network = self.classification.getNetwork()
+        self.model: nn.Module = self.network.getModel()
         self.classes: tuple = self.classification.getClassLabelsTuple()
         self.criterion = nn.CrossEntropyLoss()
+
+        # Use binary cross entropy loss on 2 output classes
+        if len(self.classes) == 2:
+            self.criterion = nn.BCELoss()
+
         self.optimizer = optim.SGD(
-            self.network.parameters(), lr=self.config.getLearningRate(), momentum=self.config.getMomentum())
+            self.model.parameters(), lr=self.config.getLearningRate(), momentum=self.config.getMomentum())
 
         meanValues = tuple(self.config.getMean())
         stdValues = tuple(self.config.getStd())
@@ -46,9 +52,15 @@ class Teacher:
         normalizerTransform = transforms.Normalize(meanValues, stdValues)
 
         baseTransforms = [transforms.ToTensor(), normalizerTransform]
+        
+        if self.config.getUseResNet():
+            baseTransforms = Transformations.getResnetTransforms()
+            baseTransforms.append(normalizerTransform)
 
+        balanceClasses = self.config.getBalanceDataSet()
         self.dataSet = CustomDataset(path=self.config.getDataPath(), classes=self.classes,
-                                     imgDim=self.config.getImageSize(), transformList=baseTransforms)
+                                     imgDim=self.config.getImageSize(), transformList=baseTransforms,
+                                     normalizerTransform=normalizerTransform, balanceClasses=balanceClasses)
 
         trainRatio = config.getTrainRatio()
         testRatio = config.getTestRatio()
@@ -61,16 +73,15 @@ class Teacher:
         if self.config.getAugmentDataSet():
             transformations = Transformations()
             augmenterTransforms = transformations.getBasicAugmenterTransforms()
-            augmenterTransforms.append(normalizerTransform)
 
             self.dataLoaders['train'].dataset.dataset.overrideTransforms(
                 augmenterTransforms)
 
         modelPath = self.config.getModelPath()
-        self.classification.loadModel(modelPath)
+        self.classification.loadModel(modelPath, self.device)
 
         # send network to device
-        self.network.to(self.device)
+        self.model.to(self.device)
 
         self.lossData: List[float] = []
         self.accuracyData: List[float] = []
@@ -80,6 +91,7 @@ class Teacher:
         ActiveTrainingInfo.reset()
         ActiveTrainingInfo.setConfig(self.config)
         ActiveTrainingInfo.setName('Training')
+        ActiveTrainingInfo.setModelName(self.network.getId())
         ActiveTrainingInfo.setCurrentEpochs(0)
         ActiveTrainingInfo.setupSavePath()
         ActiveTrainingInfo.setTotalEpochs(self.config.getEpochs())
@@ -100,14 +112,14 @@ class Teacher:
         correctPred = {classname: 0 for classname in self.classes}
         totalPred = {classname: 0 for classname in self.classes}
 
-        self.network.eval()
+        self.model.eval()
         with torch.no_grad():
             for data in self.dataLoaders['test']:
                 images, labels = data
                 images = images.to(self.device)
                 labels = labels.to(self.device)
                 labels = torch.flatten(labels)
-                outputs = self.network(images)
+                outputs = self.model(images)
                 _, predictions = torch.max(outputs, 1)
                 # collect the correct predictions for each class
                 for label, prediction in zip(labels, predictions):
@@ -130,7 +142,7 @@ class Teacher:
 
         try:
             ActiveTrainingInfo.setStatus(TrainingStatus.RUNNING)
-            self.network.train()
+            self.model.train()
             startTime = timer()
 
             epochs = self.config.getEpochs()
@@ -179,7 +191,7 @@ class Teacher:
 
             self.optimizer.zero_grad()
 
-            outputs = self.network(inputs)
+            outputs = self.model(inputs)
             loss = self.criterion(outputs, labels)
             loss.backward()
             self.optimizer.step()
@@ -205,7 +217,7 @@ class Teacher:
                 labels = labels.to(self.device)
 
                 labels = torch.flatten(labels)
-                outputs = self.network(images)
+                outputs = self.model(images)
 
                 testLoss += self.criterion(outputs, labels).item()
                 correct += (outputs.argmax(1) ==

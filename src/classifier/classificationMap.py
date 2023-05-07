@@ -1,13 +1,14 @@
 import os
 from typing import List, Dict, Tuple
 
+from torchvision import models
+
 from .classificationType import ClassificationType
 from .config.classifierConfig import ClassifierConfig
-from .config.config import Config
 from .labelItem import LabelItem
 from .models.baseNetwork import BaseNetwork
 from .models.FirstNetwork import FirstNetwork
-
+from .models.resNetNetwork import ResNetNetwork
 
 class BaseClassification:
     '''Basic classification information class'''
@@ -20,7 +21,7 @@ class BaseClassification:
         self.description = description
         self.classes = {}
         self.configuration: ClassifierConfig = None
-        self.network: BaseNetwork = None
+        self.network = None
         self.device: str = None
 
     def getLabelByValue(self, value) -> LabelItem:
@@ -74,6 +75,10 @@ class BaseClassification:
 
         self.device = device
         self.network = FirstNetwork(self.getClassNum())
+
+        if self.configuration.getUseResNet():
+            self.network = ResNetNetwork()
+
         if self.configuration.getLoadModel():
             self.network.loadToDevice(
                 self.configuration.getModelPath(), self.device)
@@ -99,24 +104,24 @@ class BaseClassification:
 
         return self.network
 
-    def saveModel(self, path: str, modelName = 'model') -> None:
+    def saveModel(self, path: str, modelName='model') -> None:
         '''Save current classification's model'''
 
         if self.configuration.getSaveModel():
             if self.network:
                 savePath = f'{path}/{modelName}.pth'
                 savePath = os.path.normpath(savePath)
-                
+
                 self.network.save(savePath)
             else:
                 print('Error saving model, network not found')
 
-    def loadModel(self, path: str) -> None:
+    def loadModel(self, path: str, device: str) -> None:
         '''Load current classification's model'''
 
         if self.configuration.getLoadModel():
             if self.network:
-                self.network.load(path)
+                self.network.loadToDevice(path, device)
                 print('Model loaded')
 
 

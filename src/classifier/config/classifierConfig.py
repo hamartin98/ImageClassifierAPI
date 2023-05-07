@@ -33,7 +33,8 @@ class ClassifierConfig:
             'mean': [0.36720132, 0.38807531, 0.35384046],
             'std': [0.18385245, 0.17220756, 0.16941115],
             'augmentDataSet': True,
-            'balanceDataSet': True
+            'balanceDataSet': True,
+            'useResNet': False
         }
 
         if fileName:
@@ -110,6 +111,9 @@ class ClassifierConfig:
 
         if 'balanceDataSet' in configData:
             self.setBalanceDataSet(configData['balanceDataSet'])
+            
+        if 'useResNet' in configData:
+            self.setUseResNet(configData['useResNet'])
 
         self.originalJsonData = configData
 
@@ -132,6 +136,7 @@ class ClassifierConfig:
         self.setBatchSize(os.environ.get('BATCH_SIZE'))
         self.setAugmentDataSet(os.environ.get('AUGMENT_DATASET'))
         self.setBalanceDataSet(os.environ.get('BALANCE_DATASET'))
+        self.setUseResNet(os.environ.get('USE_RESNET'))
         # TODO: Set mean and std values
 
     def print(self) -> None:
@@ -391,6 +396,17 @@ class ClassifierConfig:
         '''Get whether to balance class sizes in the dataset'''
 
         return self._config['balanceDataSet']
+    
+    def setUseResNet(self, newValue: bool) -> None:
+        '''Set whether to use the resnet50 model'''
+        
+        if Config.isSet(newValue):
+            self._config['useResNet'] = newValue
+            
+    def getUseResNet(self) -> bool:
+        '''Return whether to use the resnet50 model'''
+        
+        return self._config['useResNet']
 
     def getAsJson(self) -> Dict[str, Any]:
         '''Return configuration as a json dictionary'''

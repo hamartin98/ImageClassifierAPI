@@ -20,14 +20,15 @@ class Transformations():
 
     def __init__(self) -> None:
         '''Init'''
-        
+
+        # Applicable list of augmenter transforms
         self.basicAugmenterTransforms = []
-        
+
         self.initBasicAugmenterTransforms()
 
     def initBasicAugmenterTransforms(self) -> None:
         '''Setup basic augmenter transformation'''
-        
+
         toTensor = T.ToTensor()
         randomSharpness = T.RandomAdjustSharpness(sharpness_factor=20)
         gaussianBlur = T.GaussianBlur(kernel_size=(3, 5), sigma=(0.1, 5))
@@ -44,3 +45,13 @@ class Transformations():
         '''Get basic data augmenter transformation list'''
 
         return self.basicAugmenterTransforms
+
+    @staticmethod
+    def getResnetTransforms() -> None:
+        '''List of transforms to apply on images to use them in resnet models'''
+
+        transforms = []
+        transforms.append(T.ToTensor())
+        transforms.append(T.Resize(224))
+
+        return transforms

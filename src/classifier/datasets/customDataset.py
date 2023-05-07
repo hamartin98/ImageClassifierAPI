@@ -12,28 +12,47 @@ from torchvision.transforms import transforms
 class CustomDataset(Dataset):
     '''Custom dataset to handle custom image data'''
 
-    def __init__(self, path: str, classes: tuple, imgDim=(62, 62), transformList=[]):
+    def __init__(self, path: str, classes: tuple, imgDim=(62, 62), transformList=[], normalizerTransform=None, balanceClasses=False):
         '''Default initalization'''
 
+        self.normalizerTransform = transforms.Normalize(
+            [0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
+
+        if normalizerTransform:
+            self.normalizerTransform = normalizerTransform
+
+        self.balanceClasses = balanceClasses
         self.transformList: List[Any] = transformList
+        self.transformList.append(self.normalizerTransform)
         self.composedTransforms = transforms.Compose(transformList)
         self.imagesPath = path
-        self.targetDataSetSize = 0.0
+        targetDataSetSize = 0
 
         fileList = glob.glob(os.path.join(self.imagesPath, "*"))
 
         self.data = []
+        perClassData = []
 
         for classPath in fileList:
             classPath = os.path.relpath(classPath)
             className = os.path.normpath(classPath).split(os.path.sep)[-1]
             paths = glob.glob(classPath + "/*.jpg")
+            currentData = []
             for imagePath in paths:
-                self.data.append([os.path.join(imagePath), className])
+                currentData.append([os.path.join(imagePath), className])
+            perClassData.append(currentData)
 
             currentClassSize = len(paths)
-            if currentClassSize > self.targetDataSetSize:
-                self.targetDataSetSize = currentClassSize
+            if currentClassSize > targetDataSetSize:
+                targetDataSetSize = currentClassSize
+
+        for currentData in perClassData:
+            multiplier = 1
+
+            if self.balanceClasses:
+                multiplier = round(targetDataSetSize / len(currentData))
+
+            self.data.extend(currentData * multiplier)
 
         self.createClassMap(classes)
         self.imgDim = imgDim
@@ -85,4 +104,8 @@ class CustomDataset(Dataset):
         '''Override the list of transformations of the dataset'''
 
         self.transformList = transformations
+        transformations.append(self.normalizerTransform)
         self.composedTransforms = transforms.Compose(self.transformList)
+
+    def setNormalizerTransform(self, normalizerTransform) -> None:
+        self.normalizerTransform = normalizerTransform
