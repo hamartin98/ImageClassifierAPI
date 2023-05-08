@@ -39,12 +39,22 @@ class Teacher:
         self.classes: tuple = self.classification.getClassLabelsTuple()
         self.criterion = nn.CrossEntropyLoss()
 
-        # Use binary cross entropy loss on 2 output classes
-        if len(self.classes) == 2:
-            self.criterion = nn.BCELoss()
-
         self.optimizer = optim.SGD(
             self.model.parameters(), lr=self.config.getLearningRate(), momentum=self.config.getMomentum())
+
+        epochs = self.config.getEpochs()
+        # Init schedulers
+        self.cosineScheduler = optim.lr_scheduler.CosineAnnealingLR(
+            self.optimizer, epochs, 1e-4)
+
+        self.oneCycleScheduler = optim.lr_scheduler.OneCycleLR(self.optimizer,
+                                                               max_lr=1e-3,
+                                                               steps_per_epoch=8,
+                                                               epochs=epochs)
+
+        # Set used scheduler
+        #self.scheduler = self.cosineScheduler
+        self.scheduler = self.oneCycleScheduler
 
         meanValues = tuple(self.config.getMean())
         stdValues = tuple(self.config.getStd())
@@ -52,7 +62,7 @@ class Teacher:
         normalizerTransform = transforms.Normalize(meanValues, stdValues)
 
         baseTransforms = [transforms.ToTensor(), normalizerTransform]
-        
+
         if self.config.getUseResNet():
             baseTransforms = Transformations.getResnetTransforms()
             baseTransforms.append(normalizerTransform)
@@ -173,6 +183,8 @@ class Teacher:
             self.test()
 
             ActiveTrainingInfo.saveResultData()
+
+            print('Training process finished')
         except Exception as exception:
             ActiveTrainingInfo.setError(exception)
             ActiveTrainingInfo.saveResultData()
@@ -201,6 +213,8 @@ class Teacher:
             if batch % 100 == 0:
                 loss, current = loss.item(), (batch + 1) * len(inputs)
                 print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+        
+        self.scheduler.step()
 
     def validationStep(self, dataLoader):
         '''Single validation step'''

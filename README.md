@@ -25,7 +25,7 @@ docker build -f docker/Dockerfile.no_cuda . -t image-classifier-nocuda:latest
 - From main dir run:
 
 ```
-docker run --name image-classifier -p 8000:8000 -v $pwd/data:/data -t image-classifier:latest
+docker run --name image-classifier --gpus all -p 8000:8000 -v $pwd/data:/data -t image-classifier:latest
 ```
 
 
